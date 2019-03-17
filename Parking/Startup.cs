@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Parking.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Parking.Services.Api;
+using Parking.Services.Implementations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Parking
 {
@@ -38,11 +42,39 @@ namespace Parking
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddRoleStore<RoleStore<IdentityRole, ApplicationDbContext>>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 6;
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                options.User.RequireUniqueEmail = true;
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
+            services.AddScoped<IDataAdapter, DataAdapter>();
+            services.AddScoped<IDatabaseContext, ApplicationDbContext>();
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<IDataProperties, DataProperties>();
+            services.AddSingleton<IKeyFactory>(new KeyFactory());
+            services.AddSingleton<ICostCalculation, CostCalculationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +104,32 @@ namespace Parking
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            CreateUserRoles(app.ApplicationServices).Wait();
+        }
+
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+                var names = new string[] { "user", "employee" };
+                foreach (var n in names)
+                {
+                    //IdentityResult roleResult;
+                    if (!await roleManager.RoleExistsAsync(n))
+                    {
+                        //create the roles and seed them to the database
+                        await roleManager.CreateAsync(new IdentityRole(n));
+                    }
+                }
+            }
+
+
+
+            //IdentityUser user = await UserManager.FindByEmailAsync("admin@gmail.com");
+            //var User = new IdentityUser();
+            //await UserManager.AddToRoleAsync(user, "Admin");
         }
     }
 }
