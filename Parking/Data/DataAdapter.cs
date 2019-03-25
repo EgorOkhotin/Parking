@@ -13,8 +13,8 @@ namespace Parking.Data
         IDatabaseContext database;
         IDataProperties properties;
         IKeyFactory keyFactory;
-        
-        public DataAdapter([FromServices] IDatabaseContext context, 
+
+        public DataAdapter([FromServices] IDatabaseContext context,
             [FromServices] IDataProperties properties,
             [FromServices] IKeyFactory keyFactory)
         {
@@ -28,9 +28,18 @@ namespace Parking.Data
             return CreateKey(properties.GetDefaultTariffName());
         }
 
-        public async Task<Models.Key> CreateKey(string tariffName)
+        public Task<Models.Key> CreateKey(string tariffName)
+        {
+            return CreateKey(tariffName, null);
+        }
+
+        public async Task<Models.Key> CreateKey(string tariffName, string autoId)
         {
             var tariff = await database.GetTariff(tariffName);
+            if (tariff == null)
+            {
+                return null;
+            }
             var k = keyFactory.CreateKey(tariff);
 
             await database.AddKey(k);
@@ -43,6 +52,10 @@ namespace Parking.Data
         public async Task<Models.Key> FindKey(string token)
         {
             var k = await database.GetKey(token);
+            if (k == null)
+            {
+                return null;
+            }
             var result = new Models.Key()
             {
                 Token = token,
@@ -56,15 +69,39 @@ namespace Parking.Data
             return result;
         }
 
+        public async Task<Models.Key> FindKeyByAutoId(string id)
+        {
+            var k = await database.GetKeyByAutoId(id);
+            if (k == null)
+            {
+                return null;
+            }
+            var result = new Models.Key()
+            {
+                Token = k.Token,
+                TimeStamp = k.TimeStamp,
+                AutoId = id,
+                Tariff = new Models.Tariff()
+                {
+                    Name = k.Tariff.Name,
+                    Cost = k.Tariff.Cost
+                }
+            };
+            return result;
+        }
+
         public async Task<bool> DeleteKey(Models.Key key)
         {
-            return await database.DeleteKey(await database.GetKey(key.Token));
+            var k = await database.GetKey(key.Token);
+            if (k == null) return false;
+            return await database.DeleteKey(k);
+
         }
 
         public async Task<Models.Tariff> GetTariff(string tariffName)
         {
             var t = await database.GetTariff(tariffName);
-            return new Models.Tariff() { Cost = t.Cost, Name = tariffName };
+            return t == null ? null : new Models.Tariff() { Cost = t.Cost, Name = tariffName };
         }
     }
 }

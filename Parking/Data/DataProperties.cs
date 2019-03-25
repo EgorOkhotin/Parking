@@ -6,15 +6,15 @@ namespace Parking.Data
 {
     public class DataProperties : IDataProperties
     {
-        IConfiguration configuration;
+        IConfiguration _configuration;
         public DataProperties([FromServices] IConfiguration configuration)
         {
-            this.configuration = configuration;
+            this._configuration = configuration;
         }
 
         public string GetDefaultTariffName()
         {
-            return configuration.GetValue<string>("DefaultTariff");
+            return _configuration.GetValue<string>("DefaultTariff");
         }
     }
 }

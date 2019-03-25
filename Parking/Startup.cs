@@ -17,6 +17,7 @@ using Parking.Services.Api;
 using Parking.Services.Implementations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Parking
 {
@@ -68,13 +69,23 @@ namespace Parking
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
             services.AddScoped<IDataAdapter, DataAdapter>();
             services.AddScoped<IDatabaseContext, ApplicationDbContext>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IDataProperties, DataProperties>();
             services.AddSingleton<IKeyFactory>(new KeyFactory());
             services.AddSingleton<ICostCalculation, CostCalculationService>();
+
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+                // .MinimumLevel.Information()
+                // .MinimumLevel.Override("Parking", Serilog.Events.LogEventLevel.Debug)
+                // .Enrich.FromLogContext()
+                // .WriteTo.Console()
+                //.WriteTo.File("mainLog.log")
+                .CreateLogger();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +115,10 @@ namespace Parking
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // var logger = new LoggerConfiguration()
+            //     .ReadFrom.Configuration(Configuration)
+            //     .CreateLogger();
 
             CreateUserRoles(app.ApplicationServices).Wait();
         }

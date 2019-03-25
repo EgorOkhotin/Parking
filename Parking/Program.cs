@@ -7,6 +7,9 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Serilog;
+
 
 namespace Parking
 {
@@ -14,11 +17,45 @@ namespace Parking
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            // var configuration = new ConfigurationBuilder()
+            // .AddJsonFile("appsettings.json")
+            // .Build();
+            try
+            {
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return new WebHostBuilder()
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    var env = hostingContext.HostingEnvironment;
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json",
+                              optional: true, reloadOnChange: true);
+                    config.AddEnvironmentVariables();
+                })
+                // .ConfigureLogging((hostingContext, logging) =>
+                // {
+                //     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                //     logging.AddConsole();
+                //     logging.AddDebug();
+                //     logging.AddEventSourceLogger();
+                // })
+                .UseStartup<Startup>()
+                .UseSerilog();
+        }
     }
 }

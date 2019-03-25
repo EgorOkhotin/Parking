@@ -11,10 +11,16 @@ namespace Parking.Data
     {
         public Key CreateKey(Tariff tariff)
         {
+            return CreateKey(tariff,null);
+        }
+
+        public Key CreateKey(Tariff tariff, string autoId)
+        {
             var k = new Key()
             {
                 Tariff = tariff,
                 TariffId = tariff.Id,
+                AutoId = autoId,
                 TimeStamp = GetStamp(),
                 Token = GetToken()
             };

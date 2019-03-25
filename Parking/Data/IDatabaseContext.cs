@@ -10,6 +10,7 @@ namespace Parking.Data
         Task<bool> AddKey(Key key);
         Task<bool> DeleteKey(Key key);
         Task<Key> GetKey(string token);
+        Task<Key> GetKeyByAutoId(string autoId);
         Task<Tariff> GetTariff(string tariffName);
     }
 }
