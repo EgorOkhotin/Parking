@@ -36,6 +36,27 @@ namespace Parking.Controllers
             return await CreateKey(tariffName);
         }
 
+        public async Task<Models.Key> EnterCommon(string tariffName, string autoId = null)
+        {
+            if(tariffName == null) return BadRequest<Models.Key>("Tariff name is not correct!");
+            if(HttpContext.User.Identity.IsAuthenticated)
+            {
+                if(HttpContext.User.IsInRole("user"))
+                {
+                    //TODO: hide in separate method
+                    //TODO: add tariff validation
+                    return await CreateKey(tariffName, autoId);
+                }
+                else if(HttpContext.User.IsInRole("employee"))
+                {
+                    //TODO: hide in separate method
+                    //TODO: add tariff validation
+                    return await CreateKey(tariffName, autoId);
+                }
+            }
+            return await CreateKey(tariffName, autoId);
+        }
+
         public async Task<Models.Key> EnterByAutoId(string tariffName, string autoId)
         {
             if(tariffName == null) return BadRequest<Models.Key>("Tariff name is not correct!");
