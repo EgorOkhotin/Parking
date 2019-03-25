@@ -18,8 +18,8 @@ namespace Parking.Services.Implementations
             [FromServices] ILogger<CostCalculationService> logger)
         {
             _logger = logger;
-            var interval = configuration.GetValue<int>("CostTimeInteval");
-            var freeTimeInterval = configuration.GetValue<int>("FreeTimeInteval");
+            var interval = configuration.GetValue<int>("Tariffs:CostTimeInteval");
+            var freeTimeInterval = configuration.GetValue<int>("Tariffs:FreeTimeInteval");
 
             _logger.LogInformation($"Cost-Time Interval: {interval}");
             _logger.LogInformation($"Free time Interval: {freeTimeInterval}");

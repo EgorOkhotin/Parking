@@ -15,67 +15,73 @@ namespace ParkingTests
     public class ParkingControllerTest
     {
         const string TARIFF_NAME = "TEST_NAME";
+        const string USER_NAME = "TEST_USER";
+        const string USER_ROLE = "user";
+        const string EMPLOYEE_ROLE = "employee";
         ParkingController _controller {get;set;}
-        ITestOutputHelper _helper;
+        ITestOutputHelper _output;
+        DefaultHttpContext _context;
+        ClaimsBuilder _userBuilder;
+        Logger<ParkingController> _logger;
         public ParkingControllerTest(ITestOutputHelper helper)
         {
-            _helper = helper;
+            _output = helper;
+            //_output.WriteLine("Created!");
             var costCalculation = (new CostCalculationServiceTest()).GetCalculationService();
-            _controller = new ParkingController(new DataAdapterMock(), costCalculation, new Logger<ParkingController>());
-            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
-        }
-
-        [Fact]
-        public async Task Enter_TestName_NotNull()
-        {
+            _logger = new Logger<ParkingController>();
+            _controller = new ParkingController(new DataAdapterMock(), costCalculation, _logger);
+            _context = new DefaultHttpContext();
             
-            var k = await _controller.Enter(TARIFF_NAME);
-            Assert.NotNull(k);
+            _controller.ControllerContext.HttpContext = _context;
+            _userBuilder = new ClaimsBuilder();
         }
 
-        [Fact]
-        public async Task EnterUser_TestName_NotNull()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(USER_ROLE)]
+        [InlineData(EMPLOYEE_ROLE)]
+        public async Task Enter_TariffName_NotNull(string role)
         {
+            Assert.True(await Enter(role, TARIFF_NAME));
+        }
+
+        private async Task<bool> Enter(string role, string tariff)
+        {   
+            SetUpUser(role);    
             
-            var k = await _controller.EnterUser(TARIFF_NAME);
-            var r = (k!=null);
-            Assert.True(r);
+            var k = await _controller.Enter(tariff);
+
+            return IsEntered(k,role);
         }
 
-        [Fact]
-        public async Task EnterEmployee_TestName_NotNull()
+        private void SetUpUser(string role)
         {
-            
-            var k = await _controller.EnterEmployee(TARIFF_NAME);
-            Assert.NotNull(k);
+            if(role != null)
+                _context.User = _userBuilder.CreateUser(USER_NAME, role);
         }
 
-        [Fact]
-        public async Task Enter_NullName_Throws()
+        private bool IsEntered(Parking.Models.Key key, string role)
         {
-            var k = await _controller.Enter(null);
-            Assert.Null(k);
+            if(role == null)
+                return (key != null);
+
+            return (key!=null) && _logger.ContainsRecord(role);
         }
 
-        [Fact]
-        public async Task EnterUser_NullName_Throws()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(USER_ROLE)]
+        [InlineData(EMPLOYEE_ROLE)]
+        public async Task Enter_NullTariff_Null(string role)
         {
-            var k = await _controller.EnterUser(null);
-            Assert.Null(k);
-        }
-
-        [Fact]
-        public async Task EnterEmployee_NullName_Throws()
-        {
-            var k = await _controller.EnterEmployee(null);
-            Assert.Null(k);
+            Assert.False(await Enter(role,null));
         }
 
         [Fact]
         public async void GetCost_CorrectToken_GetValue()
         {
             var k = await _controller.Enter(TARIFF_NAME);
-            var result = await _controller.GetCost(k.Token);
+            var result = await _controller.GetCost(null, k.Token);
             Assert.True(result>0);
         }
 
@@ -91,7 +97,7 @@ namespace ParkingTests
         public async Task GetPay_CorrectToken_GetValue()
         {
             var k = await _controller.Enter(TARIFF_NAME);
-            var cost = await _controller.GetCost(k.Token);
+            var cost = await _controller.GetCost(null, k.Token);
             var result = await _controller.GetPay(k.Token, cost.Value);
             Assert.True(result);
         }
@@ -100,7 +106,7 @@ namespace ParkingTests
         public async Task GetPay_NullToken_False()
         {
             var k = await _controller.Enter(TARIFF_NAME);
-            var cost = await _controller.GetCost(k.Token);
+            var cost = await _controller.GetCost(null, k.Token);
             var result = await _controller.GetPay(null, cost.Value);
             Assert.False(result);
         }
@@ -109,7 +115,7 @@ namespace ParkingTests
         public async Task GetPay_LessZeroCost_False()
         {
             var k = await _controller.Enter(TARIFF_NAME);
-            var cost = await _controller.GetCost(k.Token);
+            var cost = await _controller.GetCost(null, k.Token);
             var result = await  _controller.GetPay(k.Token,-cost.Value);
             Assert.False(result);
         }
@@ -117,7 +123,7 @@ namespace ParkingTests
         [Fact]
         public async Task EnterByAutoId_NotNullAutoId_ReturnToken()
         {
-            var k = await _controller.EnterByAutoId(TARIFF_NAME, "a123oo73");
+            var k = await _controller.Enter(TARIFF_NAME, "a123oo73");
             Assert.NotNull(k);
         }
     }

@@ -40,10 +40,11 @@ namespace Parking.Data
             {
                 return null;
             }
-            var k = keyFactory.CreateKey(tariff);
+            var k = keyFactory.CreateKey(tariff, autoId);
 
             await database.AddKey(k);
             var tariffModel = new Models.Tariff() { Name = tariff.Name, Cost = tariff.Cost };
+            //! Auto id dont map because it is unnecessary parametr for return value
             var result = new Models.Key() { Token = k.Token, TimeStamp = k.TimeStamp, Tariff = tariffModel };
 
             return result;

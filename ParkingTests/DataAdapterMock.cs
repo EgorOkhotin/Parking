@@ -28,7 +28,6 @@ namespace ParkingTests
         public async Task<Parking.Models.Key> CreateKey(string tariffName, string autoId)
         {
             if (tariffName == null) throw new ArgumentException("Tariff name is null");
-            if (autoId == null) throw new ArgumentException("AutoId is null");
             return await CreateTestKey();
         }
 

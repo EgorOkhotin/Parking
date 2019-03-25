@@ -8,5 +8,6 @@ namespace Parking.Data
     public interface IKeyFactory
     {
         Key CreateKey(Tariff tariff);
+        Key CreateKey(Tariff tariff, string autoId);
     }
 }

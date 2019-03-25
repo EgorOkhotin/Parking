@@ -18,7 +18,7 @@ namespace Parking.Models
 
         public override string ToString()
         {
-            return $"|KEY| Token:{Token??TOKEN_DEFAULT_STRING}\n\t Auto ID:{AutoId??AUTOID_DEFAULT_STRING} \n\t Time:{TimeStamp} \n\t Tariff:{TariffToString()}";
+            return $"|KEY| Token:{Token??TOKEN_DEFAULT_STRING}\n\t Auto ID:{AutoId??AUTOID_DEFAULT_STRING} \n\t Time:{TimeStamp} \n\t {TariffToString()}";
         }
 
         private string TariffToString()

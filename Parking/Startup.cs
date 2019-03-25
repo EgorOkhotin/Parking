@@ -79,11 +79,6 @@ namespace Parking
 
             Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
-                // .MinimumLevel.Information()
-                // .MinimumLevel.Override("Parking", Serilog.Events.LogEventLevel.Debug)
-                // .Enrich.FromLogContext()
-                // .WriteTo.Console()
-                //.WriteTo.File("mainLog.log")
                 .CreateLogger();
 
         }
@@ -116,10 +111,6 @@ namespace Parking
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // var logger = new LoggerConfiguration()
-            //     .ReadFrom.Configuration(Configuration)
-            //     .CreateLogger();
-
             CreateUserRoles(app.ApplicationServices).Wait();
         }
 
@@ -139,10 +130,6 @@ namespace Parking
                     }
                 }
             }
-
-            //IdentityUser user = await UserManager.FindByEmailAsync("admin@gmail.com");
-            //var User = new IdentityUser();
-            //await UserManager.AddToRoleAsync(user, "Admin");
         }
 
         private async Task CreateTariffs(IServiceProvider serviceProvider)

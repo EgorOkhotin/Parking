@@ -36,7 +36,7 @@ namespace Parking.Data
                 var k = await Keys.AddAsync(key);
                 //Tariffs.Update(key.Tariff);
                 await SaveChangesAsync();
-                _logger.LogInformation($"Key added successful: {key}");
+                _logger.LogInformation($"Key added successful");
                 return true;
             }
             catch (Exception ex)
@@ -123,7 +123,7 @@ namespace Parking.Data
 
         private async Task<Key> GetKeyByAutoIdAsync(string id)
         {
-            _logger.LogInformation($"Try to get key by auto id: {id}");
+            _logger.LogInformation($"Try to get key for auto id: {id}");
             return await await Keys.FirstAsync(x => x.AutoId == id)
             .ContinueWith(task =>
             {

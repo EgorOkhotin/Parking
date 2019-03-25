@@ -13,7 +13,7 @@ namespace Parking.Models
 
         public override string ToString()
         {
-            return $"|TARIFF| Name:{Name??DEFAULT_NAME}\t Cost:{Cost}";
+            return $"|TARIFF| Name:{Name??DEFAULT_NAME}\t Cost per period:{Cost}";
         }
     }
 }
