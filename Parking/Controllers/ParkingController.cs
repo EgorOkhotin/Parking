@@ -33,7 +33,6 @@ namespace Parking.Controllers
         {
             if(tariffName == null) return BadRequest<Models.Key>("Tariff name is not correct!");
             _logger.LogInformation($"Enter on parking: {tariffName}");
-
             return await CreateKey(tariffName);
         }
 
