@@ -14,6 +14,7 @@ namespace ParkingTests
 {
     public class ParkingControllerTest
     {
+        const string TARIFF_NAME = "TEST_NAME";
         ParkingController _controller {get;set;}
         ITestOutputHelper _helper;
         public ParkingControllerTest(ITestOutputHelper helper)
@@ -28,7 +29,7 @@ namespace ParkingTests
         public async Task Enter_TestName_NotNull()
         {
             
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             Assert.NotNull(k);
         }
 
@@ -36,7 +37,7 @@ namespace ParkingTests
         public async Task EnterUser_TestName_NotNull()
         {
             
-            var k = await _controller.EnterUser("TEST_NAME");
+            var k = await _controller.EnterUser(TARIFF_NAME);
             var r = (k!=null);
             Assert.True(r);
         }
@@ -45,7 +46,7 @@ namespace ParkingTests
         public async Task EnterEmployee_TestName_NotNull()
         {
             
-            var k = await _controller.EnterEmployee("TEST_NAME");
+            var k = await _controller.EnterEmployee(TARIFF_NAME);
             Assert.NotNull(k);
         }
 
@@ -73,7 +74,7 @@ namespace ParkingTests
         [Fact]
         public async void GetCost_CorrectToken_GetValue()
         {
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             var result = await _controller.GetCost(k.Token);
             Assert.True(result>0);
         }
@@ -81,7 +82,7 @@ namespace ParkingTests
         [Fact]
         public async void GetCost_NullToken_Null()
         {
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             var r = await _controller.GetCost(null);
             Assert.Null(r);
         }
@@ -89,7 +90,7 @@ namespace ParkingTests
         [Fact]
         public async Task GetPay_CorrectToken_GetValue()
         {
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             var cost = await _controller.GetCost(k.Token);
             var result = await _controller.GetPay(k.Token, cost.Value);
             Assert.True(result);
@@ -98,7 +99,7 @@ namespace ParkingTests
         [Fact]
         public async Task GetPay_NullToken_False()
         {
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             var cost = await _controller.GetCost(k.Token);
             var result = await _controller.GetPay(null, cost.Value);
             Assert.False(result);
@@ -107,10 +108,17 @@ namespace ParkingTests
         [Fact]
         public async Task GetPay_LessZeroCost_False()
         {
-            var k = await _controller.Enter("TEST_NAME");
+            var k = await _controller.Enter(TARIFF_NAME);
             var cost = await _controller.GetCost(k.Token);
             var result = await  _controller.GetPay(k.Token,-cost.Value);
             Assert.False(result);
+        }
+
+        [Fact]
+        public async Task EnterByAutoId_NotNullAutoId_ReturnToken()
+        {
+            var k = await _controller.EnterByAutoId(TARIFF_NAME, "a123oo73");
+            Assert.NotNull(k);
         }
     }
 }

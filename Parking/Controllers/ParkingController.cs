@@ -39,6 +39,7 @@ namespace Parking.Controllers
 
         public async Task<Models.Key> EnterByAutoId(string tariffName, string autoId)
         {
+            if(tariffName == null) return BadRequest<Models.Key>("Tariff name is not correct!");
             if(autoId == null) return BadRequest<Models.Key>("Auto id is not correct!");
             _logger.LogInformation($"Enter on parking: {autoId}");
             return await CreateKey(tariffName, autoId);

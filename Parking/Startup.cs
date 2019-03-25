@@ -140,11 +140,33 @@ namespace Parking
                 }
             }
 
-
-
             //IdentityUser user = await UserManager.FindByEmailAsync("admin@gmail.com");
             //var User = new IdentityUser();
             //await UserManager.AddToRoleAsync(user, "Admin");
+        }
+
+        private async Task CreateTariffs(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (await context.Tariffs.CountAsync() == 0)
+                {
+                    var names = new string[] { "LOW", "MIDDLE", "HIGH", "SPECIAL" };
+                    var costs = new int[] { 10, 20, 30, 0 };
+                    int i = 0;
+                    foreach (var n in names)
+                    {
+                        if ((await context.Tariffs.FirstOrDefaultAsync(x => x.Name == n)) == null)
+                        {
+                            context.Tariffs.Add(new Tariff() { Name = n, Cost = costs[i] });
+                        }
+                        i++;
+                    }
+                    await context.SaveChangesAsync();
+                }
+            }
+
         }
     }
 }

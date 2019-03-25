@@ -14,11 +14,10 @@ namespace Parking.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, [FromServices] ILogger<ApplicationDbContext> logger)
             : base(options)
         {
-            InitializeTariffs().Wait();
             _logger = logger;
         }
-        private DbSet<Key> Keys { get; set; }
-        private DbSet<Tariff> Tariffs { get; set; }
+        public DbSet<Key> Keys { get; set; }
+        public DbSet<Tariff> Tariffs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -151,30 +150,5 @@ namespace Parking.Data
                 }
             });
         }
-
-
-        private async Task InitializeTariffs()
-        {
-            if (await Tariffs.CountAsync() == 0)
-            {
-                var names = new string[] { "LOW", "MIDDLE", "HIGH", "SPECIAL" };
-                var costs = new int[] { 10, 20, 30, 0 };
-                int i = 0;
-                foreach (var n in names)
-                {
-                    if ((await Tariffs.FirstOrDefaultAsync(x => x.Name == n)) == null)
-                    {
-                        Tariffs.Add(new Tariff() { Name = n, Cost = costs[i] });
-                    }
-                    i++;
-                }
-                await SaveChangesAsync();
-            }
-        }
-
-        // private Task<Key> LoadKeyTariff(Key k)
-        // {
-        //     return 
-        // }
     }
 }
