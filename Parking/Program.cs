@@ -47,13 +47,6 @@ namespace Parking
                               optional: true, reloadOnChange: true);
                     config.AddEnvironmentVariables();
                 })
-                // .ConfigureLogging((hostingContext, logging) =>
-                // {
-                //     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                //     logging.AddConsole();
-                //     logging.AddDebug();
-                //     logging.AddEventSourceLogger();
-                // })
                 .UseStartup<Startup>()
                 .UseSerilog();
         }

@@ -17,97 +17,105 @@ namespace Parking.Controllers
 {
     public class ParkingController : Controller
     {
-        IDataAdapter _data;
+        IEnterService _enterService;
         ICostCalculation _calculation;
         private readonly ILogger _logger;
-        public ParkingController([FromServices] IDataAdapter adapter,
+        public ParkingController([FromServices] IEnterService enterService,
             [FromServices] ICostCalculation calculator,
             [FromServices] ILogger<ParkingController> logger) : base()
         {
-            this._data = adapter;
+            this._enterService = enterService;
             this._calculation = calculator;
             this._logger = logger;
         }
 
-        public async Task<Models.Key> Enter(string tariffName, string autoId = null)
+        public async Task<Models.Key> Enter(string tariffName)
         {
-            if(tariffName == null) return BadRequest<Models.Key>("Tariff name is not correct!");
-            if(HttpContext.User.Identity.IsAuthenticated)
+            if (tariffName == null)
+                return BadRequest<Models.Key>("Tariff name was null");
+            try
             {
-                if(HttpContext.User.IsInRole("user"))
-                {
-                    //TODO: hide in separate method
-                    //TODO: add tariff validation
-                    _logger.LogInformation($"Enter on parking: {tariffName} \t by user: {HttpContext.User.Identity.Name}");
-                    return await CreateKey(tariffName, autoId);
-                }
-                else if(HttpContext.User.IsInRole("employee"))
-                {
-                    //TODO: hide in separate method
-                    //TODO: add tariff validation
-                    _logger.LogInformation($"Enter on parking: {tariffName} \t by employee: {HttpContext.User.Identity.Name}");
-                    return await CreateKey(tariffName, autoId);
-                }
+                return await _enterService.EnterForAnonymous(tariffName);
             }
-            _logger.LogInformation($"Created key for: {tariffName}");
-            return await CreateKey(tariffName, autoId);
+            catch (ArgumentException argException)
+            {
+                _logger.LogError($"{GetType().Name}: Can't enter on parking with tariff name {tariffName}");
+                return BadRequest<Models.Key>("");
+            }
+            catch (SystemException sysException)
+            {
+                _logger.LogError($"{GetType().Name} Can't enter on parking with tariff name {tariffName} {sysException.Message}");
+                return BadRequest<Models.Key>("");
+            }
+        }
+
+        [Authorize]
+        public async Task<Models.Key> EnterUser(string tariffName)
+        {
+            if (tariffName == null)
+                return BadRequest<Models.Key>("Tariff name was null");
+            try
+            {
+                return await _enterService.EnterForAuthorize(tariffName);
+            }
+            catch (ArgumentException argException)
+            {
+                _logger.LogError($"{GetType().Name}: Can't enter on parking with tariff name {tariffName} \n\t By user:{HttpContext.User.Identity.Name}");
+                return BadRequest<Models.Key>("");
+            }
+            catch (SystemException sysException)
+            {
+                _logger.LogError($"{GetType().Name} Can't enter on parking with tariff name {tariffName} {sysException.Message} \n\t \n\t By user:{HttpContext.User.Identity.Name}");
+                return BadRequest<Models.Key>("");
+            }
+        }
+
+        [Authorize]
+        public async Task<Models.Key> EnterUser(string tariffName, string autoId)
+        {
+            if (tariffName == null)
+                return BadRequest<Models.Key>("Tariff name was null");
+            try
+            {
+                return await _enterService.EnterForAuthorizeByAutoId(tariffName, autoId);
+            }
+            catch (ArgumentException argException)
+            {
+                _logger.LogError($"{GetType().Name}: Can't enter on parking with tariff name {tariffName} \n\t By user:{HttpContext.User.Identity.Name} \n\t {argException.Message}");
+                return BadRequest<Models.Key>("");
+            }
+            catch (SystemException sysException)
+            {
+                _logger.LogError($"{GetType().Name} Can't enter on parking with tariff name {tariffName} {sysException.Message} \n\t \n\t By user:{HttpContext.User.Identity.Name}");
+                return BadRequest<Models.Key>("");
+            }
         }
 
         public async Task<int?> GetCost(string autoId, string token = null)
         {
-            if(autoId == null && token == null)
-                return BadRequest<int?>("Incorrect parametrs!");
-
-            if(autoId != null)
+            try
             {
-                _logger.LogInformation($"Try to get cost by auto id: {autoId}");
-                return await GetCostByAutoId(autoId);
+                return await _enterService.GetCost(autoId, token);
             }
-            
-            _logger.LogInformation($"Try to get cost by token: {token}");
-            return await GetCostByToken(token);
-        }
-
-        private async Task<int?> GetCostByToken(string token)
-        {
-            var k = await _data.FindKey(token);
-            if (k != null)
+            catch (ArgumentException ex)
             {
-                _logger.LogInformation($"Founded key for token: {token} \t is {k}");
-
-                var result = _calculation.GetCost(k.TimeStamp, k.Tariff.Cost);
-                _logger.LogInformation($"Calculated cost for token: {token} \t is {result}");
-                return result;
+                _logger.LogError($"{GetType().Name}: Get cost failed! {ex.Message}");
+                return BadRequest<int?>("");
             }
-
-            _logger.LogError($"Key by token:{token} didn't find!");
-            return BadRequest<int?>("Token is not correct!");
-        }
-
-        private async Task<int?> GetCostByAutoId(string autoId)
-        {
-            var k = await _data.FindKeyByAutoId(autoId);
-            if (k != null)
-            {
-                _logger.LogInformation($"Founded key for autoId: {autoId} is \n\t {k}");
-
-                var result = _calculation.GetCost(k.TimeStamp, k.Tariff.Cost);
-                _logger.LogInformation($"Calculated cost for autoId: {autoId} \t is {result}");
-                return result;
-            }
-
-            _logger.LogError($"Key by token:{autoId} didn't find!");
-            return BadRequest<int?>("AutoId is not correct!");
         }
 
         //TODO Add sum check
         public async Task<bool> GetPay(string token, int cost)
         {
-            if(token != null && cost>=0){
-                _logger.LogInformation($"Get pay: {cost} \t by token: {token}");
-                return await _data.DeleteKey(new Models.Key() { Token = token });
+            try
+            {
+                return await _enterService.Leave(token, cost);
             }
-            return false;
+            catch(ArgumentException ex)
+            {
+                _logger.LogError($"{GetType().Name}: Cant get pay for {token}; Cost is {cost}");
+                return false;
+            }
         }
 
         //TODO Review bad request conception
@@ -122,36 +130,6 @@ namespace Parking.Controllers
                 new MemoryStream(
                     Encoding.Unicode.GetBytes(message));
             return t;
-        }
-
-        private async Task<Models.Key> CreateKey(string tariffName)
-        {
-            return await CreateKey(tariffName, null);
-        }
-
-        private async Task<Models.Key> CreateKey(string tariffName, string autoId)
-        {
-            var k = await _data.CreateKey(tariffName,autoId);
-            _logger.LogInformation($"Created key token:{k.Token}");
-            if (k != null) return k;
-            return BadRequest<Models.Key>($"Tariff name({tariffName}) is wrong");
-        }
-
-        private async Task<Models.Key> EnterUser(string tariffName, string autoId, ClaimsPrincipal user)
-        {
-            if(await IsValidTariff(tariffName, user))
-            {
-                return await CreateKey(tariffName, autoId);
-            }
-            _logger.LogWarning($"Invalid tariff for user: {user.Identity.Name}. Requested tariff: {tariffName}");
-            return null;
-        }
-
-        private async Task<bool> IsValidTariff(string tariffName, ClaimsPrincipal user)
-        {
-            return await Task.Run(()=>{
-                return true;
-            });
         }
     }
 }

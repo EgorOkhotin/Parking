@@ -18,6 +18,8 @@ using Parking.Services.Implementations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Parking.Data.Api;
+using Parking.Data.Implementations;
 
 namespace Parking
 {
@@ -69,9 +71,13 @@ namespace Parking
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddScoped<IDataAdapter, DataAdapter>();
+            services.AddScoped<IKeyService, KeyDataService>();
+            services.AddScoped<ITariffService, TariffDataService>();
+            
             services.AddScoped<IDatabaseContext, ApplicationDbContext>();
+            services.AddScoped<IKeyDataContext, IDatabaseContext>();
+            services.AddScoped<ITariffDataContext, IDatabaseContext>();
+            services.AddScoped<IEnterService, EnterService>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IDataProperties, DataProperties>();
             services.AddSingleton<IKeyFactory>(new KeyFactory());

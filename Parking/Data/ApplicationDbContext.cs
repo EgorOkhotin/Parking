@@ -6,17 +6,22 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using Parking.Data.Api;
 namespace Parking.Data
 {
+    public delegate void SaveChanges();
     public class ApplicationDbContext : IdentityDbContext, IDatabaseContext
     {
         private readonly ILogger _logger;
+        private event SaveChanges _storageChanged;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, [FromServices] ILogger<ApplicationDbContext> logger)
             : base(options)
         {
+            _storageChanged = async ()=> await SaveChangesAsync();
             _logger = logger;
         }
         public DbSet<Key> Keys { get; set; }
+        public SaveChanges StorageChangedEvent => _storageChanged;
         public DbSet<Tariff> Tariffs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

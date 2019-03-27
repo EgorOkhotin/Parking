@@ -1,4 +1,4 @@
-namespace Parking.Data
+namespace Parking.Data.Api
 {
     public interface IDataProperties
     {
