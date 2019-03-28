@@ -13,9 +13,9 @@ namespace Parking.Services.Implementations
     {
         private readonly int _timeInterval;
         private readonly int _freeTimeInterval;
-        private readonly ILogger<CostCalculationService> _logger;
+        private readonly ILogger<ICostCalculation> _logger;
         public CostCalculationService([FromServices] IConfiguration configuration,
-            [FromServices] ILogger<CostCalculationService> logger)
+            [FromServices] ILogger<ICostCalculation> logger)
         {
             _logger = logger;
             var interval = configuration.GetValue<int>("Tariffs:CostTimeInteval");

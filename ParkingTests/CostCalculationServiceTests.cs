@@ -7,160 +7,116 @@ using Parking.Services.Implementations;
 using Parking.Services.Api;
 using System.Collections.Generic;
 using Xunit.Abstractions;
+using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace ParkingTests
 {
     public class CostCalculationServiceTest
     {
-        IConfiguration Configuration {get;set;}
+        IConfiguration _configuration;
+        Mock<ILogger<ICostCalculation>> _logger;
+        ICostCalculation _cost;
         DateTimeBuilder TimeBuilder { get; set; }
-        ICostCalculation Service {get;set;}
 
         const int LOW_COST = 10;
         const int MIDDLE_COST = 20;
         const int HIGH_COST = 30;
         const int SPECIAL_COST = 0;
 
-        int _interval;
-        int _freeInterval;
+        const int COST_INTEVAL = 20;
+        const int FREE_INTERVAL = COST_INTEVAL/2;
 
         public CostCalculationServiceTest()
-        {
-            var source = GetConfigurationSource(InitializeIntervals());
-            Configuration = GetConfiguration(source);
+        {      
             TimeBuilder = new DateTimeBuilder();
-            Service = new CostCalculationService(Configuration, new Logger<CostCalculationService>());
-        }
-
-        public ICostCalculation GetCalculationService()
-        {
-            return Service;
+            _configuration = GetConfiguration(GetConfigurationSource(InitializeIntervals()));
+            _logger = new Mock<ILogger<ICostCalculation>>();
+            _cost = new CostCalculationService(_configuration, _logger.Object);
         }
         
-        
-        public void GetCost_Low_FewTimeInterval_ReturnTrue()
-        {
-            var k = new Random().Next(2,15);
-            var cost = GetFewIntervalsCost(LOW_COST, k);
-            Assert.True(cost == LOW_COST * k);
-        }
-
-        
-        public void GetCost_Middle_FewInterval_ReturnTrue()
+        [Theory]
+        [InlineData(LOW_COST)]
+        [InlineData(MIDDLE_COST)]
+        [InlineData(HIGH_COST)]
+        [InlineData(SPECIAL_COST)]
+        public void GetCost_FewTimeInterval_ReturnTrue(int tariff)
         {
             var k = new Random().Next(2,15);
-            var cost = GetFewIntervalsCost(MIDDLE_COST, k);
-            Assert.True(cost == MIDDLE_COST*k);
+            var cost = GetFewIntervalsCost(tariff, k);
+            Assert.True(cost == tariff * k);
         }
 
-        
-        public void GetCost_High_FewInterval_ReturnTrue()
-        {
-            var k = new Random().Next(2,15);
-            var cost = GetFewIntervalsCost(HIGH_COST, k);
-            Assert.True(cost == HIGH_COST*k);
-        }
-
-        
-        public void GetCost_Special_FewInterval_ReturnTrue()
-        {
-            var k = new Random().Next(2,15);
-            var cost = GetFewIntervalsCost(SPECIAL_COST, k);
-            Assert.True(cost == SPECIAL_COST*k);
-        }
-
-        
-        public void GetCost_LOW_FutureTime_ThrowException()
+        [Theory]
+        [InlineData(LOW_COST)]
+        [InlineData(MIDDLE_COST)]
+        [InlineData(HIGH_COST)]
+        [InlineData(SPECIAL_COST)]
+        public void GetCost_FutureTime_ThrowException(int tariff)
         {
             var k = new Random().Next(2,15);
             
             Assert.Throws(new ArgumentException().GetType(),()=>{
-                var cost = GetFutureTimeCost(LOW_COST, k);
+                var cost = GetFutureTimeCost(tariff, k);
             });
         }
-
         
-        public void GetCost_Middle_FutureTime_ThrowException()
-        {
-            var k = new Random().Next(2,15);
-            
-            Assert.Throws(new ArgumentException().GetType(),()=>{
-                var cost = GetFutureTimeCost(MIDDLE_COST, k);
-            });
-        }
-
-        
-        public void GetCost_Low_LessZeroCost_ThrowsException()
+        [Theory]
+        [InlineData(LOW_COST)]
+        [InlineData(MIDDLE_COST)]
+        [InlineData(HIGH_COST)]
+        public void GetCost_LessZeroCost_ThrowsException(int tariff)
         {
             var k = new Random().Next(2,15);
 
             Assert.Throws(new ArgumentException().GetType(),()=>{
-                var cost = GetCostByLessZeroPrice(LOW_COST, k);
+                var cost = GetCostByLessZeroPrice(tariff, k);
             });
         }
-
         
-        public void GetCost_Middle_LessZeroCost_ThrowsException()
-        {
-            var k = new Random().Next(2,15);
-
-            Assert.Throws(new ArgumentException().GetType(),()=>{
-                var cost = GetCostByLessZeroPrice(MIDDLE_COST, k);
-            });
-        }
-
-        
-        public void GetCost_Low_LessZeroCostAndFutureTime_ThrowsException()
+        [Theory]
+        [InlineData(LOW_COST)]
+        [InlineData(MIDDLE_COST)]
+        [InlineData(HIGH_COST)]
+        public void GetCost_LessZeroCostAndFutureTime_ThrowsException(int tariff)
         {
             var k = new Random().Next(2,15);
 
             Assert.Throws(new ArgumentException().GetType(), ()=>{
-                var cost = GetCostByLessZeroPriceAndFutureTime(LOW_COST, k);
-            });
-        }
-
-        
-        public void GetCost_Middle_LessZeroCostAndFutureTime_ThrowsException()
-        {
-            var k = new Random().Next(2,15);
-
-            Assert.Throws(new ArgumentException().GetType(),()=>{
-                var cost = GetCostByLessZeroPriceAndFutureTime(MIDDLE_COST, k);
+                var cost = GetCostByLessZeroPriceAndFutureTime(tariff, k);
             });
         }
 
         public int GetCostByLessZeroPriceAndFutureTime(int cost, int k)
         {
-            return GetCost(-cost, -_interval*k);
+            return GetCost(-cost, -COST_INTEVAL*k);
         }
         public int GetCostByLessZeroPrice(int cost, int k)
         {
-            return GetCost(-cost, _interval*k);
+            return GetCost(-cost, COST_INTEVAL*k);
         }
 
         public int GetFutureTimeCost(int cost, int k)
         {
-            return GetCost(cost, -_interval * k);
+            return GetCost(cost, -COST_INTEVAL * k);
         }
 
         private int GetFewIntervalsCost(int cost, int k)
         {
-            return GetCost(cost, _interval*k);
+            return GetCost(cost, COST_INTEVAL*k);
         }
 
         private int GetCost(int cost, int interval)
         {
             var date = TimeBuilder.GetTimeBeforeMinutes(interval);
-            return Service.GetCost(date, cost);
+            return _cost.GetCost(date, cost);
         }
 
         private IEnumerable<KeyValuePair<string,string>> InitializeIntervals()
         {
             var interval = new Random().Next(10, 20);
-            _interval = interval;
-            _freeInterval = (interval / 2);
-            var interval1 = new KeyValuePair<string, string>("CostTimeInteval", _interval.ToString());
-            var interval2 = new KeyValuePair<string, string>("FreeTimeInteval", _freeInterval.ToString());
+            var interval1 = new KeyValuePair<string, string>("Tariffs:CostTimeInteval", COST_INTEVAL.ToString());
+            var interval2 = new KeyValuePair<string, string>("Tariffs:FreeTimeInteval", FREE_INTERVAL.ToString());
             return new List<KeyValuePair<string,string>>(){interval1, interval2};
         }
 
