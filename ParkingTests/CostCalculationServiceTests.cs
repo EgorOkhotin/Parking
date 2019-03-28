@@ -37,7 +37,7 @@ namespace ParkingTests
             return Service;
         }
         
-        [Fact]
+        
         public void GetCost_Low_FewTimeInterval_ReturnTrue()
         {
             var k = new Random().Next(2,15);
@@ -45,7 +45,7 @@ namespace ParkingTests
             Assert.True(cost == LOW_COST * k);
         }
 
-        [Fact]
+        
         public void GetCost_Middle_FewInterval_ReturnTrue()
         {
             var k = new Random().Next(2,15);
@@ -53,7 +53,7 @@ namespace ParkingTests
             Assert.True(cost == MIDDLE_COST*k);
         }
 
-        [Fact]
+        
         public void GetCost_High_FewInterval_ReturnTrue()
         {
             var k = new Random().Next(2,15);
@@ -61,7 +61,7 @@ namespace ParkingTests
             Assert.True(cost == HIGH_COST*k);
         }
 
-        [Fact]
+        
         public void GetCost_Special_FewInterval_ReturnTrue()
         {
             var k = new Random().Next(2,15);
@@ -69,7 +69,7 @@ namespace ParkingTests
             Assert.True(cost == SPECIAL_COST*k);
         }
 
-        [Fact]
+        
         public void GetCost_LOW_FutureTime_ThrowException()
         {
             var k = new Random().Next(2,15);
@@ -79,7 +79,7 @@ namespace ParkingTests
             });
         }
 
-        [Fact]
+        
         public void GetCost_Middle_FutureTime_ThrowException()
         {
             var k = new Random().Next(2,15);
@@ -89,7 +89,7 @@ namespace ParkingTests
             });
         }
 
-        [Fact]
+        
         public void GetCost_Low_LessZeroCost_ThrowsException()
         {
             var k = new Random().Next(2,15);
@@ -99,7 +99,7 @@ namespace ParkingTests
             });
         }
 
-        [Fact]
+        
         public void GetCost_Middle_LessZeroCost_ThrowsException()
         {
             var k = new Random().Next(2,15);
@@ -109,7 +109,7 @@ namespace ParkingTests
             });
         }
 
-        [Fact]
+        
         public void GetCost_Low_LessZeroCostAndFutureTime_ThrowsException()
         {
             var k = new Random().Next(2,15);
@@ -119,7 +119,7 @@ namespace ParkingTests
             });
         }
 
-        [Fact]
+        
         public void GetCost_Middle_LessZeroCostAndFutureTime_ThrowsException()
         {
             var k = new Random().Next(2,15);

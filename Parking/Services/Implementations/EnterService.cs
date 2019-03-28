@@ -43,6 +43,11 @@ namespace Parking.Services.Implementations
 
         public Task<Key> EnterForAuthorizeByAutoId(string autoId, string tariffName = null)
         {
+            if(autoId==null)
+            {
+                _logger.LogWarning($"{GetType().Name}: Auto id was null!");
+                throw new ArgumentNullException();
+            } 
             return GetKey(tariffName, autoId);
         }
 
@@ -69,16 +74,16 @@ namespace Parking.Services.Implementations
 
             var t = await GetTariff(tariffName);
             var k = await CreateNewKey(t, autoId);
-
-            var isAdd = await _keyService.Add(k);
+            
+            bool isAdd = await _keyService.Add(k);
             if(!isAdd) throw new SystemException($"Can't add key!");
 
             return new Models.Key(){
                 Token = k.Token,
                 TimeStamp = k.TimeStamp,
                 Tariff = new Tariff(){
-                    Name = t.Name,
-                    Cost = t.Cost,
+                    Name = k.Tariff.Name,
+                    Cost = k.Tariff.Cost,
                 }
             };
         }
