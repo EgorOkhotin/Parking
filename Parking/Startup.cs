@@ -13,6 +13,13 @@ using Microsoft.EntityFrameworkCore;
 using Parking.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Parking.Services.Api;
+using Parking.Services.Implementations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Parking.Data.Api;
+using Parking.Data.Implementations;
 
 namespace Parking
 {
@@ -38,11 +45,48 @@ namespace Parking
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddRoleStore<RoleStore<IdentityRole, ApplicationDbContext>>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 6;
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                options.User.RequireUniqueEmail = true;
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddScoped<IKeyService, KeyDataService>();
+            services.AddScoped<ITariffService, TariffDataService>();
+            
+            services.AddScoped<IDatabaseContext, ApplicationDbContext>();
+            services.AddScoped<IKeyDataContext, IDatabaseContext>();
+            services.AddScoped<ITariffDataContext, IDatabaseContext>();
+            services.AddScoped<IEnterService, EnterService>();
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<IDataProperties, DataProperties>();
+            services.AddSingleton<IKeyFactory>(new KeyFactory());
+            services.AddSingleton<ICostCalculation, CostCalculationService>();
+
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +116,50 @@ namespace Parking
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            CreateUserRoles(app.ApplicationServices).Wait();
+        }
+
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+                var names = new string[] { "user", "employee" };
+                foreach (var n in names)
+                {
+                    //IdentityResult roleResult;
+                    if (!await roleManager.RoleExistsAsync(n))
+                    {
+                        //create the roles and seed them to the database
+                        await roleManager.CreateAsync(new IdentityRole(n));
+                    }
+                }
+            }
+        }
+
+        private async Task CreateTariffs(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (await context.Tariffs.CountAsync() == 0)
+                {
+                    var names = new string[] { "LOW", "MIDDLE", "HIGH", "SPECIAL" };
+                    var costs = new int[] { 10, 20, 30, 0 };
+                    int i = 0;
+                    foreach (var n in names)
+                    {
+                        if ((await context.Tariffs.FirstOrDefaultAsync(x => x.Name == n)) == null)
+                        {
+                            context.Tariffs.Add(new Tariff() { Name = n, Cost = costs[i] });
+                        }
+                        i++;
+                    }
+                    await context.SaveChangesAsync();
+                }
+            }
+
         }
     }
 }
