@@ -5,6 +5,7 @@ using Parking.Services.Api;
 using Parking.Data.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Parking.Data.Entites;
 
 namespace Parking.Services.Implementations
 {
@@ -13,35 +14,35 @@ namespace Parking.Services.Implementations
         IKeyService _keyService;
         ITariffService _tariffService;
         ILogger<IEnterService> _logger;
-        IDataProperties _dataProperties;
-        IKeyFactory _keyFactory;
+        IEntityFactory _entityFactory;
+        IModelCreateService _modelCreator;
         ICostCalculation _costCalculationService;
         public EnterService([FromServices] IKeyService keyService,
         [FromServices] ITariffService tariffService,
-        [FromServices] IDataProperties dataProperties,
-        [FromServices] IKeyFactory keyFactory,
+        [FromServices] IEntityFactory entityFactory,
+        [FromServices] IModelCreateService modelsCreator,
         [FromServices] ICostCalculation costCalculationService,
         [FromServices] ILogger<IEnterService> logger)
         {
             _keyService = keyService;
             _tariffService = tariffService;
             _logger = logger;
-            _dataProperties = dataProperties;
-            _keyFactory = keyFactory;
+            _entityFactory = entityFactory;
+            _modelCreator = modelsCreator;
             _costCalculationService = costCalculationService;
         }
 
-        public Task<Key> EnterForAnonymous(string tariffName = null)
+        public Task<Models.Key> EnterForAnonymous(string tariffName = null)
         {
             return GetKey(tariffName);
         }
 
-        public Task<Key> EnterForAuthorize(string tariffName = null)
+        public Task<Models.Key> EnterForAuthorize(string tariffName = null)
         {
             return GetKey(tariffName);
         }
 
-        public Task<Key> EnterForAuthorizeByAutoId(string autoId, string tariffName = null)
+        public Task<Models.Key> EnterForAuthorizeByAutoId(string autoId, string tariffName = null)
         {
             if(autoId==null)
             {
@@ -69,52 +70,18 @@ namespace Parking.Services.Implementations
 
         private async Task<Models.Key> GetKey(string tariffName, string autoId = null)
         {
-            if (tariffName == null)
-                tariffName = _dataProperties.GetDefaultTariffName();
-
-            var t = await GetTariff(tariffName);
-            var k = await CreateNewKey(t, autoId);
+            var k = _entityFactory.CreateKey(tariffName, autoId);
             
             bool isAdd = await _keyService.Add(k);
             if(!isAdd) throw new SystemException($"Can't add key!");
 
-            return new Models.Key(){
-                Token = k.Token,
-                TimeStamp = k.TimeStamp,
-                Tariff = new Tariff(){
-                    Name = k.Tariff.Name,
-                    Cost = k.Tariff.Cost,
-                }
-            };
+            return _modelCreator.CreateKeyModel(k);
         }
 
-        private async Task<Data.Tariff> GetTariff(string tariffName)
+        private async Task<Data.Entites.Key> FindKey(string token, string autoId)
         {
-            var t = await _tariffService.GetByName(tariffName);
-            if (t == null)
-            {
-                _logger.LogError($"{GetType().Name}: Tariff with name:{tariffName} didn't find!");
-                throw new ArgumentException(nameof(tariffName));
-            }
-            return t;
-        }
-
-        private async Task<Data.Key> CreateNewKey(Data.Tariff tariff, string autoId)
-        {
-            return await Task.Run(() =>{
-                Data.Key k;
-                if (autoId != null)
-                    k = _keyFactory.CreateKey(tariff, autoId);
-                else
-                    k = _keyFactory.CreateKey(tariff);
-                return k;
-            });
-        }
-
-        private async Task<Data.Key> FindKey(string token, string autoId)
-        {
-            Data.Key k;
-            Data.Tariff t;
+            Data.Entites.Key k;
+            Data.Entites.Tariff t;
             if(autoId==null)
                 k = await _keyService.GetByToken(token);
             else

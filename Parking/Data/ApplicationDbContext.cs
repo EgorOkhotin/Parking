@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Parking.Data.Api;
+using Parking.Data.Entites;
+
 namespace Parking.Data
 {
     public delegate void SaveChanges();

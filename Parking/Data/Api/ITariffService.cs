@@ -1,5 +1,5 @@
 using System;
-using Parking.Data;
+using Parking.Data.Entites;
 using System.Threading.Tasks;
 
 namespace Parking.Data.Api

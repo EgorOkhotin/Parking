@@ -1,5 +1,6 @@
 using System;
 using Parking.Data;
+using Parking.Data.Entites;
 using Parking.Data.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

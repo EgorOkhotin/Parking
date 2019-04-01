@@ -14,6 +14,8 @@ using Parking.Services.Api;
 using Parking.Services.Implementations;
 using Microsoft.Extensions.Logging;
 using Parking.Data.Api;
+using Parking.Data.Entites;
+
 
 
 namespace ParkingTests
@@ -25,8 +27,9 @@ namespace ParkingTests
         Mock<ILogger<IEnterService>> _enterServiceLogger;
         Mock<IKeyService> _keyService;
         Mock<ITariffService> _tariffService;
-        Mock<IDataProperties> _dataProperties;
-        Mock<IKeyFactory> _keyFactory;
+
+        Mock<IEntityFactory> _entityFactory;
+        Mock<IModelCreateService> _modelCreateService;
         Mock<ICostCalculation> _costCalculationService;
         DateTimeBuilder _timeBuilder;
         ITestOutputHelper _output;
