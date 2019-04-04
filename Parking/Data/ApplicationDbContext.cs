@@ -11,19 +11,24 @@ using Parking.Data.Entites;
 
 namespace Parking.Data
 {
-    public delegate void SaveChanges();
-    public class ApplicationDbContext : IdentityDbContext, IDatabaseContext
+    public class ApplicationDbContext : IdentityDbContext, IApplicationDataContext
     {
         private readonly ILogger _logger;
-        private event SaveChanges _storageChanged;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, [FromServices] ILogger<ApplicationDbContext> logger)
             : base(options)
         {
-            _storageChanged = async ()=> await SaveChangesAsync();
             _logger = logger;
+            // var k = GetKey().Result;
+            // _logger.LogInformation($"Is tariff null:")
         }
         public DbSet<Key> Keys { get; set; }
-        public SaveChanges StorageChangedEvent => _storageChanged;
+        public new DbSet<ApplicationUser> Users{get;set;}
+        public DbSet<Coupon> Coupons {get;set;}
+        public DbSet<Subscription> Subscriptions {get;set;}
+        public DbSet<UserSubscription> UserSubscriptions {get;set;}
+        public DbSet<SellOut> SellOuts {get;set;}
+
+        
         public DbSet<Tariff> Tariffs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -33,6 +38,11 @@ namespace Parking.Data
             {
                 entity.HasIndex(e => e.Name).IsUnique();
             });
+        }
+
+        private async Task<Key> GetKey()
+        {
+            return await Keys.FirstOrDefaultAsync(x => x.Id>0);
         }
 
         public async Task<bool> AddKey(Key key)

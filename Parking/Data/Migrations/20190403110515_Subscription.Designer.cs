@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parking.Data;
 
 namespace Parking.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190403110515_Subscription")]
+    partial class Subscription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,29 +187,6 @@ namespace Parking.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Parking.Data.Entites.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CouponType");
-
-                    b.Property<DateTime>("End");
-
-                    b.Property<bool>("IsUsed");
-
-                    b.Property<string>("Name");
-
-                    b.Property<DateTime>("Start");
-
-                    b.Property<string>("Token");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Coupons");
-                });
-
             modelBuilder.Entity("Parking.Data.Entites.Key", b =>
                 {
                     b.Property<int>("Id")
@@ -231,46 +210,23 @@ namespace Parking.Data.Migrations
                     b.ToTable("Keys");
                 });
 
-            modelBuilder.Entity("Parking.Data.Entites.SellOut", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Counter");
-
-                    b.Property<DateTime>("End");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("SellOutType");
-
-                    b.Property<DateTime>("Start");
-
-                    b.Property<string>("Tariffs");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SellOuts");
-                });
-
             modelBuilder.Entity("Parking.Data.Entites.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("End");
-
                     b.Property<string>("Name");
 
-                    b.Property<DateTime>("Start");
+                    b.Property<int?>("SubscriptionId");
 
                     b.Property<string>("TariffNames");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscriptions");
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("Subscription");
                 });
 
             modelBuilder.Entity("Parking.Data.Entites.Tariff", b =>
@@ -306,7 +262,7 @@ namespace Parking.Data.Migrations
 
                     b.HasIndex("SubscriptionId");
 
-                    b.ToTable("UserSubscriptions");
+                    b.ToTable("UserSubscription");
                 });
 
             modelBuilder.Entity("Parking.Data.Entites.ApplicationUser", b =>
@@ -375,10 +331,17 @@ namespace Parking.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Parking.Data.Entites.Subscription", b =>
+                {
+                    b.HasOne("Parking.Data.Entites.Subscription")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("SubscriptionId");
+                });
+
             modelBuilder.Entity("Parking.Data.Entites.UserSubscription", b =>
                 {
                     b.HasOne("Parking.Data.Entites.Subscription", "Subscription")
-                        .WithMany("Subscriptions")
+                        .WithMany()
                         .HasForeignKey("SubscriptionId");
                 });
 

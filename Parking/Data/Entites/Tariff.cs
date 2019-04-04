@@ -11,12 +11,13 @@ namespace Parking.Data.Entites
         public Tariff()
         {
             Keys = new List<Key>();
+
         }
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public int Cost { get; set; }
-        public ICollection<Key> Keys { get; set; }
+        public List<Key> Keys { get; set; }
 
         public override string ToString()
         {

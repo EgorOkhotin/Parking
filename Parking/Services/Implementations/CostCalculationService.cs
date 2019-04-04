@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Parking.Data.Entites;
+using Parking.Data.Api;
 
 namespace Parking.Services.Implementations
 {
@@ -13,13 +15,19 @@ namespace Parking.Services.Implementations
     {
         private readonly int _timeInterval;
         private readonly int _freeTimeInterval;
+        ITariffService _tariffs;
+        IDiscountDataService _discounts;
         private readonly ILogger<ICostCalculation> _logger;
         public CostCalculationService([FromServices] IConfiguration configuration,
-            [FromServices] ILogger<ICostCalculation> logger)
+        [FromServices] ITariffService tariffService,
+        [FromServices] IDiscountDataService discounts,
+        [FromServices] ILogger<ICostCalculation> logger)
         {
             _logger = logger;
             var interval = configuration.GetValue<int>("Tariffs:CostTimeInteval");
             var freeTimeInterval = configuration.GetValue<int>("Tariffs:FreeTimeInteval");
+            _tariffs = tariffService;
+            _discounts = discounts;
 
             _logger.LogInformation($"Cost-Time Interval: {interval}");
             _logger.LogInformation($"Free time Interval: {freeTimeInterval}");
@@ -50,6 +58,24 @@ namespace Parking.Services.Implementations
                 return 0;
             }
             else return result;
+        }
+
+        public int GetCost(Key key)
+        {
+            var tariff = GetTariff(key.TariffId).Result;
+            int cost = tariff.Cost;
+
+            throw new NotImplementedException();
+        }
+
+        private bool IsHaveDiscount(Key k)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<Tariff> GetTariff(int? tariffId)
+        {
+            return await _tariffs.GetById(tariffId.Value);
         }
 
         private int GetIntervalsCount(TimeSpan span)

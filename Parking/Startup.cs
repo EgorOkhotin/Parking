@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Parking.Data.Api;
 using Parking.Data.Implementations;
+using Parking.Data.Entites;
 
 namespace Parking
 {
@@ -45,7 +46,7 @@ namespace Parking
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddRoleStore<RoleStore<IdentityRole, ApplicationDbContext>>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddRoleManager<RoleManager<IdentityRole>>()
@@ -74,9 +75,9 @@ namespace Parking
             services.AddScoped<IKeyService, KeyDataService>();
             services.AddScoped<ITariffService, TariffDataService>();
             
-            services.AddScoped<IDatabaseContext, ApplicationDbContext>();
-            services.AddScoped<IKeyDataContext, IDatabaseContext>();
-            services.AddScoped<ITariffDataContext, IDatabaseContext>();
+            services.AddScoped<IApplicationDataContext, ApplicationDbContext>();
+            services.AddScoped<IKeyDataContext, ApplicationDbContext>();
+            services.AddScoped<ITariffDataContext, ApplicationDbContext>();
             services.AddScoped<IEnterService, EnterService>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IDataProperties, DataProperties>();
@@ -159,7 +160,38 @@ namespace Parking
                     await context.SaveChangesAsync();
                 }
             }
+        }
 
+        private async Task CreateSubscriptions(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                if (await context.Subscriptions.CountAsync() == 0)
+                {
+                    var names = new string[]{"Off50", "Off25"};
+                    var sellouts = new SellOut[]{
+                        new SellOut(){
+                            Name = names[0],
+                            SellOutType = SellOutType.Off50,
+                            Start = DateTime.MinValue,
+                            End = DateTime.MaxValue,
+                            Tariffs = "LOW MIDDLE"
+                        },
+                        new SellOut(){
+                            Name = names[1],
+                            SellOutType = SellOutType.Off25,
+                            Start = DateTime.MinValue,
+                            End = DateTime.MaxValue,
+                            Tariffs = "LOW MIDDLE HIGH"
+                        }
+                    };
+                    foreach(var s in sellouts)
+                    {
+                        context.SellOuts.Add(s);
+                    }
+                }
+            }
         }
     }
 }
