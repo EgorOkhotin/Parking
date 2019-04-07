@@ -25,8 +25,8 @@ namespace ParkingTests
         const int DEFAULT_COST = 10;
         EnterService _enterService;
         Mock<ILogger<IEnterService>> _enterServiceLogger;
-        Mock<IKeyService> _keyService;
-        Mock<ITariffService> _tariffService;
+        Mock<IKeyDataService> _keyService;
+        Mock<ITariffDataService> _tariffService;
 
         Mock<IEntityFactory> _entityFactory;
         Mock<IModelCreateService> _modelCreateService;
@@ -53,21 +53,11 @@ namespace ParkingTests
             SetUpTariffService();
             SetUpKeyService();
 
-            _keyFactory = new Mock<IKeyFactory>();
-            _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>())).Returns(new Key(){
-                Token = It.IsNotNull<string>(),
-                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
-                Tariff = new Tariff(){
-                    Name = It.IsNotNull<string>(),
-                    Cost = DEFAULT_COST
-                }
-            }); 
-
             SetUpDataProperties();
             SetUpCalculationService();
             SetUpLogger();
 
-            _enterService = new EnterService(_keyService.Object, _tariffService.Object, _dataProperties.Object, _keyFactory.Object, _costCalculationService.Object, _enterServiceLogger.Object);
+            //_enterService = new EnterService(_keyService.Object, _tariffService.Object, _dataProperties.Object, _keyFactory.Object, _costCalculationService.Object, _enterServiceLogger.Object);
 
             var key = await _enterService.EnterForAnonymous(tariff);
             
@@ -113,7 +103,7 @@ namespace ParkingTests
         {
             SetUp();
 
-            _tariffService = new Mock<ITariffService>();
+            _tariffService = new Mock<ITariffDataService>();
             var returned = Task.Run(()=> default(Tariff));
             _tariffService.Setup(t => t.GetByName(It.IsNotNull<string>())).Returns(returned);
 
@@ -129,7 +119,7 @@ namespace ParkingTests
         public async Task Enter_InvalidTariff_Throw(string tariff)
         {
             SetUp();
-            _tariffService = new Mock<ITariffService>();
+            _tariffService = new Mock<ITariffDataService>();
             var returned = Task.Run(()=> default(Tariff));
             _tariffService.Setup(t => t.GetByName(It.IsNotNull<string>())).Returns(returned);
             SetUpEnterService();
@@ -144,7 +134,7 @@ namespace ParkingTests
         public async Task EnterById_InvalidTariff_Throw(string tariff)
         {
             SetUp();
-            _tariffService = new Mock<ITariffService>();
+            _tariffService = new Mock<ITariffDataService>();
             var returned = Task.Run(()=> default(Tariff));
             _tariffService.Setup(t => t.GetByName(It.IsNotNull<string>())).Returns(returned);
             SetUpEnterService();
@@ -227,8 +217,8 @@ namespace ParkingTests
 
         private void SetUpDataProperties()
         {
-            _dataProperties = new Mock<IDataProperties>();
-            _dataProperties.Setup(d => d.GetDefaultTariffName()).Returns("LOW");
+            //_dataProperties = new Mock<IDataProperties>();
+            //_dataProperties.Setup(d => d.GetDefaultTariffName()).Returns("LOW");
         }
 
         private void SetUpCalculationService()
@@ -256,7 +246,7 @@ namespace ParkingTests
                     }
                 };
             });
-            _keyService = new Mock<IKeyService>();
+            _keyService = new Mock<IKeyDataService>();
             _keyService.Setup(s => s.Add(It.IsNotNull<Key>())).Returns(defaultVal);
             _keyService.Setup(s => s.Delete(It.IsNotNull<string>())).Returns(defaultVal);
             _keyService.Setup(s => s.GetByToken(It.IsNotNull<string>())).Returns(returnedKey);
@@ -265,42 +255,42 @@ namespace ParkingTests
         private void SetUpTariffService()
         {
             var defaultTariff = Task.Run(()=> new Tariff(){Name = It.IsNotNull<string>(), Cost=DEFAULT_COST });
-            _tariffService = new Mock<ITariffService>();
+            _tariffService = new Mock<ITariffDataService>();
             _tariffService.Setup(t => t.GetByName(It.IsNotNull<string>())).Returns(defaultTariff);
             _tariffService.Setup(t => t.GetById(It.Is<int>(i => i>=0))).Returns(defaultTariff);
         }
 
         private void SetUpKeyFactory()
         {
-            _keyFactory = new Mock<IKeyFactory>();
-            _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>())).Returns(new Key(){
-                Token = It.IsNotNull<string>(),
-                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
-                AutoId = It.IsNotNull<string>(),
-                Tariff = new Tariff(){
-                    Name = It.IsNotNull<string>(),
-                    Cost = It.Is<int>(n => n>=0)
-                }
-            }); 
-            _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>(), It.IsNotNull<string>())).Returns(new Key(){
-                Token = It.IsNotNull<string>(),
-                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
-                AutoId = It.IsNotNull<string>(),
-                Tariff = new Tariff(){
-                    Name = It.IsNotNull<string>(),
-                    Cost = It.Is<int>(n => n>=0)
-                }
-            });
+            // _keyFactory = new Mock<IKeyFactory>();
+            // _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>())).Returns(new Key(){
+            //     Token = It.IsNotNull<string>(),
+            //     TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+            //     AutoId = It.IsNotNull<string>(),
+            //     Tariff = new Tariff(){
+            //         Name = It.IsNotNull<string>(),
+            //         Cost = It.Is<int>(n => n>=0)
+            //     }
+            // }); 
+            // _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>(), It.IsNotNull<string>())).Returns(new Key(){
+            //     Token = It.IsNotNull<string>(),
+            //     TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+            //     AutoId = It.IsNotNull<string>(),
+            //     Tariff = new Tariff(){
+            //         Name = It.IsNotNull<string>(),
+            //         Cost = It.Is<int>(n => n>=0)
+            //     }
+            // });
         }
 
         private void SetUpEnterService()
         {
-            _enterService = new EnterService(_keyService.Object,
-            _tariffService.Object,
-            _dataProperties.Object,
-            _keyFactory.Object,
-            _costCalculationService.Object,
-            _enterServiceLogger.Object);
+            // _enterService = new EnterService(_keyService.Object,
+            // _tariffService.Object,
+            // _dataProperties.Object,
+            // _keyFactory.Object,
+            // _costCalculationService.Object,
+            // _enterServiceLogger.Object);
         }
 
         private void SetUp()

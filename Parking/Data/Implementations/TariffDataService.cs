@@ -11,12 +11,12 @@ using System.Linq.Expressions;
 
 namespace Parking.Data.Implementations
 {
-    public class TariffDataService : ITariffService
+    public class TariffDataService : ITariffDataService
     {
-        ILogger<ITariffService> _logger;
+        ILogger<ITariffDataService> _logger;
         ITariffDataContext _context;
         public TariffDataService([FromServices] ITariffDataContext context,
-        [FromServices] ILogger<ITariffService> logger)
+        [FromServices] ILogger<ITariffDataService> logger)
         {
             _logger = logger;
             _context = context;
@@ -29,7 +29,7 @@ namespace Parking.Data.Implementations
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 _logger.LogError($"{GetType().Name}: Can't add tariff! {tariff}");
                 return false;

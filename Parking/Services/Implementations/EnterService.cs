@@ -11,17 +11,19 @@ namespace Parking.Services.Implementations
 {
     public class EnterService : IEnterService
     {
-        IKeyService _keyService;
-        ITariffService _tariffService;
+        IKeyDataService _keyService;
+        ITariffDataService _tariffService;
         ILogger<IEnterService> _logger;
         IEntityFactory _entityFactory;
         IModelCreateService _modelCreator;
         ICostCalculation _costCalculationService;
-        public EnterService([FromServices] IKeyService keyService,
-        [FromServices] ITariffService tariffService,
+        IStatisticDataService _statistic;
+        public EnterService([FromServices] IKeyDataService keyService,
+        [FromServices] ITariffDataService tariffService,
         [FromServices] IEntityFactory entityFactory,
         [FromServices] IModelCreateService modelsCreator,
         [FromServices] ICostCalculation costCalculationService,
+        [FromServices] IStatisticDataService statistic,
         [FromServices] ILogger<IEnterService> logger)
         {
             _keyService = keyService;
@@ -30,6 +32,7 @@ namespace Parking.Services.Implementations
             _entityFactory = entityFactory;
             _modelCreator = modelsCreator;
             _costCalculationService = costCalculationService;
+            _statistic = statistic;
         }
 
         public Task<Models.Key> EnterForAnonymous(string tariffName = null)
@@ -52,13 +55,13 @@ namespace Parking.Services.Implementations
             return GetKey(tariffName, autoId);
         }
 
-        public async Task<int> GetCost(string autoId, string token)
+        public async Task<int> GetCost(string autoId, string token, string userEmail = null, string coupon = null)
         {
             if(autoId== null && token== null)
                 throw new ArgumentNullException();
             
             var k = await FindKey(token, autoId);
-            return _costCalculationService.GetCost(k.TimeStamp, k.Tariff.Cost);
+            return _costCalculationService.GetCost(k, userEmail, coupon);
         }
 
         //TODO add sum check
@@ -74,7 +77,7 @@ namespace Parking.Services.Implementations
             
             bool isAdd = await _keyService.Add(k);
             if(!isAdd) throw new SystemException($"Can't add key!");
-
+            
             return _modelCreator.CreateKeyModel(k);
         }
 

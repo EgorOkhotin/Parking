@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Parking.Data.Api
 {
-    public interface ITariffService
+    public interface ITariffDataService
     {
         Task<Tariff> GetByName(string name);
         Task<Tariff> GetById(int id);

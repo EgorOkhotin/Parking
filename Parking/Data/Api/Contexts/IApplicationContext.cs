@@ -10,7 +10,8 @@ namespace Parking.Data.Api
     ITariffDataContext, 
     ISellOutDataContext, 
     ISubscriptionDataContext, 
-    ICouponDataContext
+    ICouponDataContext,
+    IStatisticDataContext
     {
     }
 }

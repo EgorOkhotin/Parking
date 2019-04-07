@@ -37,7 +37,7 @@ namespace Parking.Controllers
             {
                 return await _enterService.EnterForAnonymous(tariffName);
             }
-            catch (ArgumentException argException)
+            catch (ArgumentException)
             {
                 _logger.LogError($"{GetType().Name}: Can't enter on parking with tariff name {tariffName}");
                 return BadRequest<Models.Key>("");
@@ -58,7 +58,7 @@ namespace Parking.Controllers
             {
                 return await _enterService.EnterForAuthorize(tariffName);
             }
-            catch (ArgumentException argException)
+            catch (ArgumentException)
             {
                 _logger.LogError($"{GetType().Name}: Can't enter on parking with tariff name {tariffName} \n\t By user:{HttpContext.User.Identity.Name}");
                 return BadRequest<Models.Key>("");
@@ -91,11 +91,14 @@ namespace Parking.Controllers
             }
         }
 
-        public async Task<int?> GetCost(string autoId, string token = null)
+        public async Task<int?> GetCost(string autoId, string token = null, string coupon = null)
         {
             try
             {
-                return await _enterService.GetCost(autoId, token);
+                string userEmail = null;
+                if(HttpContext.User.Identity.IsAuthenticated)
+                    userEmail = HttpContext.User.Identity.Name;
+                return await _enterService.GetCost(autoId, token, userEmail, coupon);
             }
             catch (ArgumentException ex)
             {
@@ -111,7 +114,7 @@ namespace Parking.Controllers
             {
                 return await _enterService.Leave(token, cost);
             }
-            catch(ArgumentException ex)
+            catch(ArgumentException)
             {
                 _logger.LogError($"{GetType().Name}: Cant get pay for {token}; Cost is {cost}");
                 return false;

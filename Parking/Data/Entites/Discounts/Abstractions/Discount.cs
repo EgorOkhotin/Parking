@@ -17,7 +17,7 @@ namespace Parking.Data.Entites
         }
         public virtual bool IsActive()
         {
-            return (Start >= DateTime.Now) && (DateTime.Now < End);
+            return (Start <= DateTime.Now) && (DateTime.Now < End);
         }
 
     }

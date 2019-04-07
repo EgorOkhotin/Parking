@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Parking.Data.Implementations
 {
-    public class SubscriptionService : ISubscriptionService
+    public class SubscriptionDataService : ISubscriptionDataService
     {
         ISubscriptionDataContext _context;
 
-        public SubscriptionService([FromServices]ISubscriptionDataContext context)
+        public SubscriptionDataService([FromServices]ISubscriptionDataContext context)
         {
             _context = context;
         }

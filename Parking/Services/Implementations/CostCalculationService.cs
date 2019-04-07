@@ -15,12 +15,13 @@ namespace Parking.Services.Implementations
     {
         private readonly int _timeInterval;
         private readonly int _freeTimeInterval;
-        ITariffService _tariffs;
-        IDiscountDataService _discounts;
+        ITariffDataService _tariffs;
+        
+        IDiscountService _discounts;
         private readonly ILogger<ICostCalculation> _logger;
         public CostCalculationService([FromServices] IConfiguration configuration,
-        [FromServices] ITariffService tariffService,
-        [FromServices] IDiscountDataService discounts,
+        [FromServices] ITariffDataService tariffService,
+        [FromServices] IDiscountService discounts,
         [FromServices] ILogger<ICostCalculation> logger)
         {
             _logger = logger;
@@ -60,16 +61,15 @@ namespace Parking.Services.Implementations
             else return result;
         }
 
-        public int GetCost(Key key)
+        public int GetCost(Key key, string userEmail =null, string coupon =  null)
         {
             var tariff = GetTariff(key.TariffId).Result;
             int cost = tariff.Cost;
 
-            throw new NotImplementedException();
-        }
+            var result = _discounts.GetCost(cost, tariff.Name, userEmail, coupon);
 
-        private bool IsHaveDiscount(Key k)
-        {
+            return GetCost(key.TimeStamp, cost);
+
             throw new NotImplementedException();
         }
 

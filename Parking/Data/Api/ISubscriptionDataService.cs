@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Parking.Data.Api
 {
-    public interface ISubscriptionService
+    public interface ISubscriptionDataService
     {
         Task<Subscription> FindSubscription(string userEmail);
         

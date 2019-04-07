@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Parking.Data.Api
 {
-    public interface ICouponService
+    public interface ICouponDataService
     {
         Task<Coupon> FindCoupon(string token);
         Task<bool> UseCoupon(Coupon coupon);

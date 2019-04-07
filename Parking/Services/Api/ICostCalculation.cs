@@ -8,8 +8,7 @@ namespace Parking.Services.Api
 {
     public interface ICostCalculation
     {
-        int GetCost(Key key);
-        //int GetCostWithDiscount(Key key, )
+        int GetCost(Key key, string userEmail = null, string coupon = null);
         int GetCost(DateTime timeStamp, int cost);
     }
 }

@@ -10,12 +10,12 @@ using Parking.Data.Entites;
 
 namespace Parking.Data.Implementations
 {
-    public class KeyDataService : IKeyService
+    public class KeyDataService : IKeyDataService
     {
-        ILogger<IKeyService> _logger;
+        ILogger<IKeyDataService> _logger;
         IKeyDataContext _context;
         public KeyDataService([FromServices]IKeyDataContext context,
-        [FromServices] ILogger<IKeyService> logger)
+        [FromServices] ILogger<IKeyDataService> logger)
         {
             _context = context;
             _logger = logger;

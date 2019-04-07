@@ -1,9 +1,10 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Parking.Services.Api
 {
-    interface IDiscountService
+    public interface IDiscountService
     {
-        
+        Task<int> GetCost(int cost, string tariffName, string userEmail = null, string coupon = null);
     }
 }

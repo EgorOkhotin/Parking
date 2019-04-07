@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Parking.Data.Api;
 using Parking.Data.Entites;
+using Parking.Data.Entites.Statistic;
 
 namespace Parking.Data
 {
@@ -18,9 +19,8 @@ namespace Parking.Data
             : base(options)
         {
             _logger = logger;
-            // var k = GetKey().Result;
-            // _logger.LogInformation($"Is tariff null:")
         }
+        public DbSet<Record> Records {get;set;}
         public DbSet<Key> Keys { get; set; }
         public new DbSet<ApplicationUser> Users{get;set;}
         public DbSet<Coupon> Coupons {get;set;}

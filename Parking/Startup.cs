@@ -21,6 +21,8 @@ using Serilog;
 using Parking.Data.Api;
 using Parking.Data.Implementations;
 using Parking.Data.Entites;
+using Parking.Data.Factories.Abstractions;
+using Parking.Data.Factories;
 
 namespace Parking
 {
@@ -72,17 +74,35 @@ namespace Parking
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddScoped<IKeyService, KeyDataService>();
-            services.AddScoped<ITariffService, TariffDataService>();
+
             
             services.AddScoped<IApplicationDataContext, ApplicationDbContext>();
             services.AddScoped<IKeyDataContext, ApplicationDbContext>();
             services.AddScoped<ITariffDataContext, ApplicationDbContext>();
+            services.AddScoped<IStatisticDataContext, ApplicationDbContext>();
+            services.AddScoped<ICouponDataContext, ApplicationDbContext>();
+            services.AddScoped<ISellOutDataContext, ApplicationDbContext>();
+            services.AddScoped<ISubscriptionDataContext, ApplicationDbContext>();
+
+            services.AddScoped<ISellOutFactory, DefaultSellOutFactory>();
+            services.AddScoped<ICouponFactory, DefaultCouponFactory>();
+            services.AddSingleton<IRecordFactory, RecordFactory>();
+            services.AddSingleton<IKeyFactory>(new KeyFactory());
+
+            services.AddScoped<IKeyDataService, KeyDataService>();
+            services.AddScoped<ITariffDataService, TariffDataService>();
+            services.AddScoped<ICouponDataService, CouponDataService>();
+            services.AddScoped<ISellOutDataService, SellOutDataService>();
+            services.AddScoped<ISubscriptionDataService, SubscriptionDataService>();
+            services.AddScoped<IDiscountDataService, DiscountDataService>();
+            services.AddScoped<IStatisticDataService, StatisticDataService>();
+            
             services.AddScoped<IEnterService, EnterService>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IDataProperties, DataProperties>();
-            services.AddSingleton<IKeyFactory>(new KeyFactory());
             services.AddSingleton<ICostCalculation, CostCalculationService>();
+            services.AddSingleton<IDiscountService, DiscountService>();
+
 
             Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
@@ -119,6 +139,9 @@ namespace Parking
             });
 
             CreateUserRoles(app.ApplicationServices).Wait();
+            CreateTariffs(app.ApplicationServices).Wait();
+            CreateSubscriptions(app.ApplicationServices).Wait();
+            AddSubscriptionToUser(app.ApplicationServices).Wait();
         }
 
         private async Task CreateUserRoles(IServiceProvider serviceProvider)
@@ -170,27 +193,61 @@ namespace Parking
                 if (await context.Subscriptions.CountAsync() == 0)
                 {
                     var names = new string[]{"Off50", "Off25"};
-                    var sellouts = new SellOut[]{
-                        new SellOut(){
+                    var sellouts = new Subscription[]{
+                        new Subscription(){
                             Name = names[0],
-                            SellOutType = SellOutType.Off50,
                             Start = DateTime.MinValue,
                             End = DateTime.MaxValue,
-                            Tariffs = "LOW MIDDLE"
+                            TariffNames = "LOW MIDDLE"
                         },
-                        new SellOut(){
+                        new Subscription(){
                             Name = names[1],
-                            SellOutType = SellOutType.Off25,
                             Start = DateTime.MinValue,
                             End = DateTime.MaxValue,
-                            Tariffs = "LOW MIDDLE HIGH"
+                            TariffNames = "LOW MIDDLE HIGH"
                         }
                     };
                     foreach(var s in sellouts)
                     {
-                        context.SellOuts.Add(s);
+                        context.Subscriptions.Add(s);
                     }
+                    context.SaveChanges();
                 }
+            }
+        }
+
+        private async Task AddSubscriptionToUser(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                var subs = context.Subscriptions.First();
+                var user = context.Users.First();
+                var registration = new UserSubscription()
+                {
+                    User = user,
+                    Subscription = subs
+                };
+                context.UserSubscriptions.Add(registration);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private async Task CheckAdding(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                var logger = scope.ServiceProvider.GetService<ILogger<Startup>>();
+
+                var registration = await context.UserSubscriptions.Include(x => x.User == context.Users.First(u => u.UserSubscriptionId==x.Id))
+                                                                .Include(x => x.Subscription)
+                                                                .FirstAsync();
+
+                var user = registration.User;
+                var subscription = registration.Subscription;
+                logger.LogInformation($"User is null: {user == null}");
+                logger.LogInformation($"Subscription is null: {subscription == null}");
             }
         }
     }

@@ -12,10 +12,10 @@ namespace Parking.Data
     class EntityFactory : IEntityFactory
     {
         IDataProperties _properties;
-        ITariffService _tariffs;
+        ITariffDataService _tariffs;
         IKeyFactory _keyFactory;
         public EntityFactory([FromServices] IDataProperties dataProperties,
-        [FromServices] ITariffService tariffs,
+        [FromServices] ITariffDataService tariffs,
         [FromServices] IKeyFactory keyFactory)
         {
             _properties = dataProperties;

@@ -32,7 +32,7 @@ namespace ParkingTests
             TimeBuilder = new DateTimeBuilder();
             _configuration = GetConfiguration(GetConfigurationSource(InitializeIntervals()));
             _logger = new Mock<ILogger<ICostCalculation>>();
-            _cost = new CostCalculationService(_configuration, _logger.Object);
+            //_cost = new CostCalculationService(_configuration, _logger.Object);
         }
         
         [Theory]
