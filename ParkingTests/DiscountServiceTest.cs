@@ -85,6 +85,25 @@ namespace ParkingTests
             await Assert.ThrowsAsync(type, async()=> await _discount.GetCost(10, TARIFF_NAME, null, DISCOUNT_NAME));
         }
 
+        [Fact]
+        public async Task GetCost_InactiveSubscription_GetFullCost()
+        {
+            SetUp(GetDefaultCoupon(), GetDefaultSellOut(), GetInactiveSubscription());
+            var cost = await _discount.GetCost(10, TARIFF_NAME, "USER", null);
+            var result = (cost == 10);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task GetCost_InactiveSellOut_GetFullCost()
+        {
+            SetUp(GetDefaultCoupon(), GetInactiveSellOut(), GetDefaultSubscription());
+            var cost = await _discount.GetCost(10, TARIFF_NAME);
+            var result = (cost == 10);
+            Assert.True(result);
+        }
+
+
         private void SetUp(Task<Discount> coupon, Task<Discount> sellOut, Task<Discount> subscription)
         {
             SetUpDiscountDataService(coupon, sellOut, subscription);
@@ -145,8 +164,23 @@ namespace ParkingTests
                     Name = "EMPTY",
                     Counter = 100,
                     Id = 0,
-                    Start = _timeBuilder.GetTimeBeforeMinutes(10),
-                    End = _timeBuilder.GetTimeBeforeMinutes(-100),
+                    Start = DateTime.MinValue,
+                    End = DateTime.MaxValue,
+                    Tariffs = "HIGH TEST"
+                };
+            });
+        }
+
+        private Task<Discount> GetInactiveSellOut()
+        {
+            return Task.Run(()=> {
+                return (Discount) new Off25SellOut(){
+                    SellOutType = SellOutType.Off25,
+                    Name = "EMPTY",
+                    Counter = 100,
+                    Id = 0,
+                    Start = _timeBuilder.GetTimeBeforeMinutes(20),
+                    End = _timeBuilder.GetTimeBeforeMinutes(10),
                     Tariffs = "HIGH TEST"
                 };
             });
@@ -159,8 +193,21 @@ namespace ParkingTests
                     TariffNames = "HIGH TEST",
                     Id = 0,
                     Name = "EMPTY",
-                    Start = _timeBuilder.GetTimeBeforeMinutes(10),
-                    End = _timeBuilder.GetTimeBeforeMinutes(-100)
+                    Start = DateTime.MinValue,
+                    End = DateTime.MaxValue
+                };
+            });
+        }
+
+        private Task<Discount> GetInactiveSubscription()
+        {
+            return Task.Run(()=>{
+                return (Discount) new Subscription(){
+                    TariffNames = "HIGH TEST",
+                    Id = 0,
+                    Name = "EMPTY",
+                    Start = _timeBuilder.GetTimeBeforeMinutes(20),
+                    End = _timeBuilder.GetTimeBeforeMinutes(10)
                 };
             });
         }

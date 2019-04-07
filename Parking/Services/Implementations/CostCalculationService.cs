@@ -65,17 +65,29 @@ namespace Parking.Services.Implementations
         {
             var tariff = GetTariff(key.TariffId).Result;
             int cost = tariff.Cost;
+            cost = GetCost(key.TimeStamp, cost);
 
-            var result = _discounts.GetCost(cost, tariff.Name, userEmail, coupon);
-
-            return GetCost(key.TimeStamp, cost);
-
-            throw new NotImplementedException();
+            try
+            {
+                cost = GetDiscount(cost, tariff.Name, userEmail, coupon).Result;
+            }
+            catch(ArgumentException ex)
+            {
+                _logger.LogError($"COST CALCULATION: Can't use discount! {ex.Message}");
+            }
+            
+            return cost;
         }
 
         private async Task<Tariff> GetTariff(int? tariffId)
         {
             return await _tariffs.GetById(tariffId.Value);
+        }
+
+        private async Task<int> GetDiscount(int cost, string tariffName, string userEmail, string coupon)
+        {
+            var res = await _discounts.GetCost(cost, tariffName, userEmail, coupon);
+            return res;
         }
 
         private int GetIntervalsCount(TimeSpan span)

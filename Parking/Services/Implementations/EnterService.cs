@@ -65,10 +65,14 @@ namespace Parking.Services.Implementations
         }
 
         //TODO add sum check
-        public Task<bool> Leave(string token, int cost)
+        public async Task<bool> Leave(string token, int cost)
         {
             if(token == null || cost<0) throw new ArgumentException();
-            return _keyService.Delete(token);
+            var result = await _keyService.Delete(token);
+            // if(result)
+            //     _statistic.
+
+            return result;
         }
 
         private async Task<Models.Key> GetKey(string tariffName, string autoId = null)
