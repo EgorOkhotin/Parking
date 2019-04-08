@@ -6,13 +6,12 @@ namespace Parking.Data
 {
     public class RecordFactory : IRecordFactory
     {
-        public Record CreateRecord(int nonFreePlaces, AreaType area)
+        public Record CreateRecord(int incoming, int outcoming)
         {
             return new Record()
             {
-                Area = area,
                 Time = DateTime.Now,
-                Description = $"Non free places: {nonFreePlaces}"
+                Description = $"Incoming: ({incoming}) \t Outcoming: ({outcoming})"
             };
         }
     }

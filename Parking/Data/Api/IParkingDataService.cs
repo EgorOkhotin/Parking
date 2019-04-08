@@ -1,11 +1,11 @@
 using System;
+using System.Linq;
 using Parking.Data.Entites;
 
 namespace Parking.Data.Api
 {
     public interface IParkingDataService
     {
-        Data.Entites.Parking GetPlace(string name);
-
+        IQueryable<Data.Entites.Parking> GetParkingAreas();
     }
 }

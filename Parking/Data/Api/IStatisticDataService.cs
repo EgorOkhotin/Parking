@@ -7,7 +7,7 @@ namespace Parking.Data.Api
 {
     public interface IStatisticDataService
     {
-        Task AddRecord(int nonFreePlaces, AreaType area);
+        Task AddRecord(int incoming, int outcoming);
         Task<IEnumerable<Record>> GetRecordsByDate(DateTime date);
         Task<IEnumerable<Record>> GetRecordsBetweenDates(DateTime start, DateTime end);
     }

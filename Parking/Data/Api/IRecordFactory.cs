@@ -5,6 +5,6 @@ namespace Parking.Data.Api
 {
     public interface IRecordFactory
     {
-        Record CreateRecord(int nonFreePlaces, AreaType area);
+        Record CreateRecord(int incoming, int outcoming);
     }
 }

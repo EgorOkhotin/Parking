@@ -6,20 +6,7 @@ namespace Parking.Data.Entites
     {
         public int Id{get;set;}
         public string Name{get;set;}
-        public int FreePlaces {get;set;}
-
-        public bool IsHavePlace()
-        {
-            return FreePlaces>0;
-        }
-
-        public bool GetPlace()
-        {
-            if(!IsHavePlace())
-                throw new InvalidOperationException();
-            
-            FreePlaces--;
-            return true;
-        }
+        public int AnonymousPlaces {get;set;}
+        public int AuthorizePlaces {get;set;}
     }
 }

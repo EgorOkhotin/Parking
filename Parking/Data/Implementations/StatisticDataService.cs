@@ -20,9 +20,9 @@ namespace Parking.Data.Implementations
             _recordFactory = recordFactory;
             _context = context;
         }
-        public async Task AddRecord(int nonFreePlaces, AreaType area)
+        public async Task AddRecord(int incoming, int outcoming)
         {
-            var record = _recordFactory.CreateRecord(nonFreePlaces, area);
+            var record = _recordFactory.CreateRecord(incoming, outcoming);
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
         }

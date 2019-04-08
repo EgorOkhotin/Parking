@@ -7,7 +7,6 @@ namespace  Parking.Data.Entites.Statistic
     {
         [Key]
         public DateTime Time{get;set;}
-        public AreaType Area {get;set;}
         public string Description {get;set;}
     }
 }
