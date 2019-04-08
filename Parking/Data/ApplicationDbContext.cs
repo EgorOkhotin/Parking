@@ -21,6 +21,7 @@ namespace Parking.Data
             _logger = logger;
         }
         public DbSet<Record> Records {get;set;}
+        public DbSet<Data.Entites.Parking> Parkings {get;set;}
         public DbSet<Key> Keys { get; set; }
         public new DbSet<ApplicationUser> Users{get;set;}
         public DbSet<Coupon> Coupons {get;set;}

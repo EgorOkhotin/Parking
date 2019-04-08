@@ -11,7 +11,8 @@ namespace Parking.Data.Api
     ISellOutDataContext, 
     ISubscriptionDataContext, 
     ICouponDataContext,
-    IStatisticDataContext
+    IStatisticDataContext,
+    IParkingDataContext
     {
     }
 }
