@@ -16,12 +16,12 @@ namespace Parking.Services.Implementations
         IEntityFactory _entityFactory;
         IModelCreateService _modelCreator;
         ICostCalculation _costCalculationService;
-        IStatisticDataService _statistic;
+        IStatisticService _statistic;
         public EnterService([FromServices] IKeyDataService keyService,
         [FromServices] IEntityFactory entityFactory,
         [FromServices] IModelCreateService modelsCreator,
         [FromServices] ICostCalculation costCalculationService,
-        [FromServices] IStatisticDataService statistic,
+        [FromServices] IStatisticService statistic,
         [FromServices] ILogger<IEnterService> logger)
         {
             _keyService = keyService;
