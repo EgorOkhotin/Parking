@@ -14,20 +14,16 @@ namespace Parking.Services.Implementations
     public class CostCalculationService : ICostCalculation
     {
         private readonly int _timeInterval;
-        private readonly int _freeTimeInterval;
-        ITariffDataService _tariffs;
-        
+        private readonly int _freeTimeInterval;        
         IDiscountService _discounts;
         private readonly ILogger<ICostCalculation> _logger;
         public CostCalculationService([FromServices] IConfiguration configuration,
-        [FromServices] ITariffDataService tariffService,
         [FromServices] IDiscountService discounts,
         [FromServices] ILogger<ICostCalculation> logger)
         {
             _logger = logger;
             var interval = configuration.GetValue<int>("Tariffs:CostTimeInteval");
             var freeTimeInterval = configuration.GetValue<int>("Tariffs:FreeTimeInteval");
-            _tariffs = tariffService;
             _discounts = discounts;
 
             _logger.LogInformation($"Cost-Time Interval: {interval}");
@@ -63,13 +59,12 @@ namespace Parking.Services.Implementations
 
         public int GetCost(Key key, string userEmail =null, string coupon =  null)
         {
-            var tariff = GetTariff(key.TariffId).Result;
-            int cost = tariff.Cost;
+            int cost = key.Tariff.Cost;
             cost = GetCost(key.TimeStamp, cost);
 
             try
             {
-                cost = GetDiscount(cost, tariff.Name, userEmail, coupon).Result;
+                cost = GetDiscount(cost, key.Tariff.Name, userEmail, coupon).Result;
             }
             catch(ArgumentException ex)
             {
@@ -77,11 +72,6 @@ namespace Parking.Services.Implementations
             }
             
             return cost;
-        }
-
-        private async Task<Tariff> GetTariff(int? tariffId)
-        {
-            return await _tariffs.GetById(tariffId.Value);
         }
 
         private async Task<int> GetDiscount(int cost, string tariffName, string userEmail, string coupon)

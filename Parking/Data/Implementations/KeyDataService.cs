@@ -49,7 +49,7 @@ namespace Parking.Data.Implementations
 
         public async Task<Key> GetByAutoId(string autoId)
         {
-            var k = await _context.Keys.FirstOrDefaultAsync(x => x.AutoId == autoId);
+            var k = await _context.Keys.Include(x => x.Tariff).FirstOrDefaultAsync(x => x.AutoId == autoId);
             if(k == null)
                 _logger.LogWarning($"{GetType().Name}: Key didn't find by auto id:{autoId}");
             return k;
@@ -57,7 +57,8 @@ namespace Parking.Data.Implementations
 
         public async Task<Key> GetByToken(string token)
         {
-            var k = await _context.Keys.FirstOrDefaultAsync(x => x.Token == token);
+            
+            var k = await _context.Keys.Include(x => x.Tariff).FirstOrDefaultAsync(x => x.Token == token);
             if(k == null)
                 _logger.LogWarning($"{GetType().Name}: Key didn't find by token:{token}");
             return k;

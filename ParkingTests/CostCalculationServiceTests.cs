@@ -20,7 +20,6 @@ namespace ParkingTests
         IConfiguration _configuration;
         Mock<ILogger<ICostCalculation>> _logger;
         Mock<IDiscountService> _discounts;
-        Mock<ITariffDataService> _tariffs;
         ICostCalculation _cost;
         DateTimeBuilder TimeBuilder { get; set; }
 
@@ -42,8 +41,7 @@ namespace ParkingTests
             _configuration = GetConfiguration(GetConfigurationSource(InitializeIntervals()));
             _logger = new Mock<ILogger<ICostCalculation>>();
             _discounts = InitializeDiscountService();
-            _tariffs = InitializeTariffDataService();
-            _cost = new CostCalculationService(_configuration, _tariffs.Object, _discounts.Object, _logger.Object);
+            _cost = new CostCalculationService(_configuration, _discounts.Object, _logger.Object);
             _output = output;
         }
         
@@ -119,9 +117,7 @@ namespace ParkingTests
             _discounts = new Mock<IDiscountService>();
             _discounts.Setup(x => x.GetCost(It.IsAny<int>(), It.IsNotNull<string>(), null, null))
             .Returns(Task.Run(async ()=> {return coff*DEFAULT_COST;}));
-            _output.WriteLine($"Returned cost {_discounts.Object.GetCost(0,"Some").Result}");
-            _output.WriteLine($"Returned tariff {_tariffs.Object.GetById(1).Result}");
-            _cost = new CostCalculationService(_configuration, _tariffs.Object, _discounts.Object, _logger.Object);
+            _cost = new CostCalculationService(_configuration,  _discounts.Object, _logger.Object);
 
             var result = _cost.GetCost(k);
 
@@ -181,14 +177,6 @@ namespace ParkingTests
             var service = new Mock<IDiscountService>();
             var defaultCost = Task.Run(()=> DEFAULT_COST);
             service.Setup(x => x.GetCost(It.Is<int>(n => n>=0), It.IsNotNull<string>(), null, null)).Returns(defaultCost);
-            return service;
-        }
-
-        private Mock<ITariffDataService> InitializeTariffDataService()
-        {
-            var defaultTariff = Task.Run(()=> new Tariff(){Name = "EMPTY", Cost=DEFAULT_COST });
-            var service = new Mock<ITariffDataService>();
-            service.Setup(x => x.GetById(It.IsNotNull<int>())).Returns(defaultTariff);
             return service;
         }
     }

@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Parking.Data.Factories.Abstractions;
 
 namespace Parking.Data.Implementations
 {
     public class CouponDataService : ICouponDataService
     {
         ICouponDataContext _context;
-
-        public CouponDataService([FromServices]ICouponDataContext context)
+        ICouponFactory _factory;
+        public CouponDataService([FromServices]ICouponDataContext context,
+        [FromServices] ICouponFactory factory)
         {
             _context = context;
+            _factory = factory;
         }
         public async Task<Coupon> FindCoupon(string token)
         {
@@ -23,7 +26,8 @@ namespace Parking.Data.Implementations
                 throw new ArgumentNullException("Token can't be null");
             
             var c = await _context.Coupons.FirstOrDefaultAsync(x => x.Token == token);
-            return c;
+            
+            return c!=null ?_factory.GetCoupon(c) : c;
         }
 
         public async Task<bool> UseCoupon(Coupon coupon)

@@ -12,14 +12,12 @@ namespace Parking.Services.Implementations
     public class EnterService : IEnterService
     {
         IKeyDataService _keyService;
-        ITariffDataService _tariffService;
         ILogger<IEnterService> _logger;
         IEntityFactory _entityFactory;
         IModelCreateService _modelCreator;
         ICostCalculation _costCalculationService;
         IStatisticDataService _statistic;
         public EnterService([FromServices] IKeyDataService keyService,
-        [FromServices] ITariffDataService tariffService,
         [FromServices] IEntityFactory entityFactory,
         [FromServices] IModelCreateService modelsCreator,
         [FromServices] ICostCalculation costCalculationService,
@@ -27,7 +25,6 @@ namespace Parking.Services.Implementations
         [FromServices] ILogger<IEnterService> logger)
         {
             _keyService = keyService;
-            _tariffService = tariffService;
             _logger = logger;
             _entityFactory = entityFactory;
             _modelCreator = modelsCreator;
@@ -88,15 +85,11 @@ namespace Parking.Services.Implementations
         private async Task<Data.Entites.Key> FindKey(string token, string autoId)
         {
             Data.Entites.Key k;
-            Data.Entites.Tariff t;
             if(autoId==null)
                 k = await _keyService.GetByToken(token);
             else
                 k = await _keyService.GetByAutoId(autoId);
 
-            t = await _tariffService.GetById(k.TariffId.Value);
-            
-            k.Tariff = t;
             return k;
         }
     }

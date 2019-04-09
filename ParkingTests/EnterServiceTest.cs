@@ -31,6 +31,7 @@ namespace ParkingTests
         Mock<IEntityFactory> _entityFactory;
         Mock<IModelCreateService> _modelCreateService;
         Mock<ICostCalculation> _costCalculationService;
+        Mock<IStatisticService> _statistic;
         DateTimeBuilder _timeBuilder;
         ITestOutputHelper _output;
 
@@ -285,12 +286,12 @@ namespace ParkingTests
 
         private void SetUpEnterService()
         {
-            // _enterService = new EnterService(_keyService.Object,
-            // _tariffService.Object,
-            // _dataProperties.Object,
-            // _keyFactory.Object,
-            // _costCalculationService.Object,
-            // _enterServiceLogger.Object);
+            _enterService = new EnterService(_keyService.Object,
+            _entityFactory.Object,
+            _modelCreateService.Object,
+            _costCalculationService.Object,
+            _statistic.Object,
+            _enterServiceLogger.Object);
         }
 
         private void SetUp()

@@ -5,14 +5,17 @@ using Parking.Data.Entites;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Parking.Data.Factories.Abstractions;
 
 namespace Parking.Data.Implementations
 {
     public class SellOutDataService : ISellOutDataService
     {
         ISellOutDataContext _context;
+        ISellOutFactory _factory;
 
-        public SellOutDataService([FromServices]ISellOutDataContext context)
+        public SellOutDataService([FromServices]ISellOutDataContext context,
+        [FromServices] ISellOutFactory factory)
         {
             _context = context;
         }
@@ -26,10 +29,10 @@ namespace Parking.Data.Implementations
                 return _context.SellOuts
                 .Where(x => x.Start > DateTime.Now && x.End < DateTime.Now)
                 .Where(x => x.Counter > 0)
-                .SingleOrDefault(x => x.Tariffs.Contains(tariffName));
+                .FirstOrDefault(x => x.Tariffs.Contains(tariffName));
             });
 
-            return sellout;
+            return sellout != null? _factory.GetSellOut(sellout) : sellout;
         }
 
         public async Task<bool> UseSellOut(SellOut sellOut)
