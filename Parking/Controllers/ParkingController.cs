@@ -107,20 +107,6 @@ namespace Parking.Controllers
             }
         }
 
-        //TODO Add sum check
-        public async Task<bool> GetPay(string token, int cost)
-        {
-            try
-            {
-                return await _enterService.Leave(token, cost);
-            }
-            catch(ArgumentException)
-            {
-                _logger.LogError($"{GetType().Name}: Cant get pay for {token}; Cost is {cost}");
-                return false;
-            }
-        }
-
         //TODO Review bad request conception
         private T BadRequest<T>(string message)
         {

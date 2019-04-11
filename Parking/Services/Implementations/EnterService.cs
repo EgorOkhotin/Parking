@@ -58,18 +58,8 @@ namespace Parking.Services.Implementations
                 throw new ArgumentNullException();
             
             var k = await FindKey(token, autoId);
+            await _keyService.Delete(k.Token);
             return _costCalculationService.GetCost(k, userEmail, coupon);
-        }
-
-        //TODO add sum check
-        public async Task<bool> Leave(string token, int cost)
-        {
-            if(token == null || cost<0) throw new ArgumentException();
-            var result = await _keyService.Delete(token);
-            // if(result)
-            //     _statistic.
-
-            return result;
         }
 
         private async Task<Models.Key> GetKey(string tariffName, string autoId = null)

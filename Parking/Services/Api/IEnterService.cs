@@ -12,7 +12,5 @@ namespace Parking.Services.Api
         Task<Models.Key> EnterForAuthorizeByAutoId(string tariffName, string autoId);
 
         Task<int> GetCost(string autoId, string token, string userEmail = null, string coupon = null);
-
-        Task<bool> Leave(string token, int cost);
     }
 }

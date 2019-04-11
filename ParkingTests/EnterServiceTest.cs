@@ -50,16 +50,35 @@ namespace ParkingTests
         [InlineData(null)]
         public async Task EnterAnonymous_CorrectTariffName_NotNull(string tariff)
         {
-            
-            SetUpTariffService();
-            SetUpKeyService();
+            SetUp();
+            _entityFactory = new Mock<IEntityFactory>();
+            _entityFactory.Setup(f => f.CreateKey(It.IsAny<string>())).Returns(new Key(){
+                Token = It.IsNotNull<string>(),
+                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+                Tariff = new Tariff(){
+                    Name = It.IsNotNull<string>(),
+                    Cost = DEFAULT_COST
+                }
+            });
 
-            SetUpDataProperties();
-            SetUpCalculationService();
-            SetUpLogger();
+            _entityFactory.Setup(f => f.CreateKey(It.IsAny<string>(), It.IsAny<string>())).Returns(new Key(){
+                Token = It.IsNotNull<string>(),
+                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+                AutoId = It.IsNotNull<string>(),
+                Tariff = new Tariff(){
+                    Name = It.IsNotNull<string>(),
+                    Cost = It.Is<int>(n => n>=0)
+                }
+            });
 
-            //_enterService = new EnterService(_keyService.Object, _tariffService.Object, _dataProperties.Object, _keyFactory.Object, _costCalculationService.Object, _enterServiceLogger.Object);
+            //_output.WriteLine($"E fac key == null : {_entityFactory.Object.CreateKey(null) == null}"); 
 
+            _enterService = new EnterService(_keyService.Object,
+            _entityFactory.Object,
+            _modelCreateService.Object,
+            _costCalculationService.Object,
+            _statistic.Object,
+            _enterServiceLogger.Object);
             var key = await _enterService.EnterForAnonymous(tariff);
             
             Assert.NotNull(key);
@@ -179,49 +198,6 @@ namespace ParkingTests
             await Assert.ThrowsAsync(exType,async ()=>await _enterService.GetCost(null,null));
         }
 
-        [Theory]
-        [InlineData("token1")]
-        [InlineData("token2")]
-        public async Task Leave_ValidToken_ValidCost_True(string token)
-        {
-            SetUp();
-            var r = await _enterService.Leave(token, DEFAULT_COST);
-            Assert.True(r);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        public async Task Leave_NullToken_ValidCost_Throws(string token)
-        {
-            SetUp();
-            var exType = new ArgumentException().GetType();
-            await Assert.ThrowsAsync(exType,async ()=>await _enterService.Leave(token, DEFAULT_COST));
-        }
-
-        [Theory]
-        [InlineData("token")]
-        public async Task Leave_ValidToknen_InvalidCost_Throws(string token)
-        {
-            SetUp();
-            var exType = new ArgumentException().GetType();
-            await Assert.ThrowsAsync(exType,async ()=>await _enterService.Leave(token, -DEFAULT_COST));
-        }
-
-        [Theory]
-        [InlineData(null)]
-        public async Task Leave_NullToknen_InvalidCost_Throws(string token)
-        {
-            SetUp();
-            var exType = new ArgumentException().GetType();
-            await Assert.ThrowsAsync(exType,async ()=>await _enterService.Leave(token, -DEFAULT_COST));
-        }
-
-        private void SetUpDataProperties()
-        {
-            //_dataProperties = new Mock<IDataProperties>();
-            //_dataProperties.Setup(d => d.GetDefaultTariffName()).Returns("LOW");
-        }
-
         private void SetUpCalculationService()
         {
             _costCalculationService = new Mock<ICostCalculation>();
@@ -231,6 +207,12 @@ namespace ParkingTests
         private void SetUpLogger()
         {
             _enterServiceLogger = new Mock<ILogger<IEnterService>>();
+        }
+
+        private void SetUpModelCreateService()
+        {
+            _modelCreateService = new Mock<IModelCreateService>();
+            _modelCreateService.Setup(s => s.CreateKeyModel(It.IsNotNull<Key>())).Returns(new Parking.Models.Key());
         }
 
         private void SetUpKeyService()
@@ -261,27 +243,33 @@ namespace ParkingTests
             _tariffService.Setup(t => t.GetById(It.Is<int>(i => i>=0))).Returns(defaultTariff);
         }
 
-        private void SetUpKeyFactory()
+        private void SetUpStatisticService()
         {
-            // _keyFactory = new Mock<IKeyFactory>();
-            // _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>())).Returns(new Key(){
-            //     Token = It.IsNotNull<string>(),
-            //     TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
-            //     AutoId = It.IsNotNull<string>(),
-            //     Tariff = new Tariff(){
-            //         Name = It.IsNotNull<string>(),
-            //         Cost = It.Is<int>(n => n>=0)
-            //     }
-            // }); 
-            // _keyFactory.Setup(f => f.CreateKey(It.IsNotNull<Tariff>(), It.IsNotNull<string>())).Returns(new Key(){
-            //     Token = It.IsNotNull<string>(),
-            //     TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
-            //     AutoId = It.IsNotNull<string>(),
-            //     Tariff = new Tariff(){
-            //         Name = It.IsNotNull<string>(),
-            //         Cost = It.Is<int>(n => n>=0)
-            //     }
-            // });
+            _statistic = new Mock<IStatisticService>();
+            _statistic.SetReturnsDefault(true);
+        }
+
+        private void SetUpEntityFactory()
+        {
+            _entityFactory = new Mock<IEntityFactory>();
+            _entityFactory.Setup(f => f.CreateKey(It.IsAny<string>())).Returns(new Key(){
+                Token = It.IsNotNull<string>(),
+                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+                AutoId = It.IsNotNull<string>(),
+                Tariff = new Tariff(){
+                    Name = It.IsNotNull<string>(),
+                    Cost = It.Is<int>(n => n>=0)
+                }
+            }); 
+            _entityFactory.Setup(f => f.CreateKey(It.IsAny<string>(), It.IsAny<string>())).Returns(new Key(){
+                Token = It.IsNotNull<string>(),
+                TimeStamp = _timeBuilder.GetTimeBeforeMinutes(10),
+                AutoId = It.IsNotNull<string>(),
+                Tariff = new Tariff(){
+                    Name = It.IsNotNull<string>(),
+                    Cost = It.Is<int>(n => n>=0)
+                }
+            });
         }
 
         private void SetUpEnterService()
@@ -296,10 +284,11 @@ namespace ParkingTests
 
         private void SetUp()
         {
-            SetUpKeyFactory();
+            SetUpStatisticService();
+            SetUpModelCreateService();
+            SetUpEntityFactory();
             SetUpTariffService();
             SetUpKeyService();
-            SetUpDataProperties();
             SetUpCalculationService();
             SetUpLogger();
             SetUpEnterService();
