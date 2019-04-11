@@ -49,7 +49,7 @@ namespace Parking.Services.Implementations
             {
                 _logger.LogWarning($"{GetType().Name}: Auto id was null!");
                 throw new ArgumentNullException();
-            } 
+            }
             return GetKey(tariffName, autoId);
         }
 
@@ -58,8 +58,11 @@ namespace Parking.Services.Implementations
             if(autoId== null && token== null)
                 throw new ArgumentNullException();
             
+            var id = autoId??token;
+            
             var k = await FindKey(token, autoId);
             await _keyService.Delete(k.Token);
+            _statistic.LeaveUser(id, k.Tariff.Name);
             return _costCalculationService.GetCost(k, userEmail, coupon);
         }
 
@@ -69,6 +72,8 @@ namespace Parking.Services.Implementations
             
             bool isAdd = await _keyService.Add(k);
             if(!isAdd) throw new SystemException($"Can't add key!");
+
+            _statistic.EnterUser(k.Token, k.Tariff.Name);
             
             return _modelCreator.CreateKeyModel(k);
         }
