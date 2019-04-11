@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using Moq;
-using Parking.Data.Api;
+using Parking.Data.Api.Services;
 
 namespace ParkingTests
 {

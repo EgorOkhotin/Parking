@@ -3,7 +3,7 @@ using Parking.Data.Entites.Statistic;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace Parking.Data.Api
+namespace Parking.Data.Api.Services
 {
     public interface IStatisticDataService
     {

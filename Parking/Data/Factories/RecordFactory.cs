@@ -1,5 +1,7 @@
 using System;
 using Parking.Data.Entites.Statistic;
+using Parking.Data.Api.Factories;
+using Parking.Data.Api.Services;
 using Parking.Data.Api;
 
 namespace Parking.Data

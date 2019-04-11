@@ -6,8 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Parking.Data.Api.Contexts;
+using Parking.Data.Api.Services;
+using Parking.Data.Api.Factories;
 
-namespace Parking.Data.Implementations
+namespace Parking.Data.Services
 {
     public class StatisticDataService : IStatisticDataService
     {

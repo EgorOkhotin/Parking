@@ -7,8 +7,10 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Linq;
 using Parking.Data.Entites;
+using Parking.Data.Api.Contexts;
+using Parking.Data.Api.Services;
 
-namespace Parking.Data.Implementations
+namespace Parking.Data.Services
 {
     public class KeyDataService : IKeyDataService
     {

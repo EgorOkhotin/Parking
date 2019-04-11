@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
+using Parking.Data.Api.Contexts;
+using Parking.Data.Api.Services;
 
-namespace Parking.Data.Implementations
+namespace Parking.Data.Services
 {
     public class SubscriptionDataService : ISubscriptionDataService
     {

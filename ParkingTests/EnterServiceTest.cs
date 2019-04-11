@@ -13,7 +13,8 @@ using Moq;
 using Parking.Services.Api;
 using Parking.Services.Implementations;
 using Microsoft.Extensions.Logging;
-using Parking.Data.Api;
+using Parking.Data.Api.Services;
+using Parking.Data.Api.Factories;
 using Parking.Data.Entites;
 
 

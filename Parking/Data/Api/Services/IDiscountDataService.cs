@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Parking.Data.Entites;
 
-namespace Parking.Data.Api
+namespace Parking.Data.Api.Services
 {
     public interface IDiscountDataService
     {

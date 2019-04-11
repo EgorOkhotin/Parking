@@ -8,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
+using Parking.Data.Api.Contexts;
+using Parking.Data.Api.Services;
 
-namespace Parking.Data.Implementations
+namespace Parking.Data.Services
 {
     public class TariffDataService : ITariffDataService
     {

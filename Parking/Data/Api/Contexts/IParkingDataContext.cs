@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Parking.Data.Entites;
 using System;
 
-namespace Parking.Data.Api
+namespace Parking.Data.Api.Contexts
 {
     public interface IParkingDataContext : IDataContext
     {
