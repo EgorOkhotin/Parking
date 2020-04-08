@@ -43,7 +43,7 @@ namespace Parking
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
+                options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddRoleStore<RoleStore<IdentityRole, ApplicationDbContext>>()
@@ -75,8 +75,8 @@ namespace Parking
             services.AddScoped<ITariffService, TariffDataService>();
             
             services.AddScoped<IDatabaseContext, ApplicationDbContext>();
-            services.AddScoped<IKeyDataContext, IDatabaseContext>();
-            services.AddScoped<ITariffDataContext, IDatabaseContext>();
+            services.AddScoped<IKeyDataContext, ApplicationDbContext>();
+            services.AddScoped<ITariffDataContext, ApplicationDbContext>();
             services.AddScoped<IEnterService, EnterService>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IDataProperties, DataProperties>();
@@ -118,6 +118,7 @@ namespace Parking
             });
 
             CreateUserRoles(app.ApplicationServices).Wait();
+            CreateTariffs(app.ApplicationServices).Wait();
         }
 
         private async Task CreateUserRoles(IServiceProvider serviceProvider)
