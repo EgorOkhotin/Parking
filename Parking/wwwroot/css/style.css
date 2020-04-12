@@ -1,0 +1,319 @@
+@import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap");
+.container2{
+ width: 100%;
+ height: 450px;
+}
+.logo{
+ background: url("../img/logo.png") no-repeat center;
+ background-size: 100%;
+ margin: auto;
+ width: 450px;
+ height: 450px;
+ opacity: 0.3;
+}
+.separator{
+ width: 100%;
+ height: 20px;
+}
+.img{
+ vertical-align: text-bottom;
+}
+.menu{
+ font-family: 'Indie Flower', cursive;
+ font-weight: bold;
+ font-size: 20px;
+}
+.name{
+ font-family: "Indie Flower", cursive;
+ font-size: 40px;
+ font-weight: bold;
+ text-align: center;
+ position: relative;
+ bottom: 290px;
+ left: 10px;
+ z-index: 1;
+}
+.row{
+ background: url("../img/bar.png") no-repeat center;
+ background-size: 800px 120px;
+ }
+ .textmenu{
+  margin: 20px;
+  color: #726B6B;
+ }
+ .park{
+  position: relative;
+  left: 180px;
+  border: 3px solid black;
+ }
+ .body{
+  background: url("../img/fon.png");
+  background-size: cover;
+ }
+ .container3{
+  margin-top: 50px;
+  
+ }
+ .bt-style{
+  position: relative;
+  bottom: 208px;
+  left: 1000px;
+  margin-left: -72px;
+  background-color: slategray;
+  font-family: "Indie Flower", cursive;
+  font-weight: bold;
+ }
+ .separator2{
+   width: 100%;
+   height: 100px;
+  }
+  .car{
+   position: relative;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   z-index: 1;
+  }
+  .car1{
+   position: relative;
+   bottom: 377px;
+   left: 28px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car2{
+   position: relative;
+   bottom: 400px;
+   left: -7px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car3{
+   position: relative;
+   bottom: 424px;
+   left: -42px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car4{
+   position: relative;
+   bottom: 448px;
+   left: -73px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }
+  .car5{
+   position: relative;
+   bottom: 472px;
+   left: -105px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car6{
+   position: relative;
+   bottom: 495px;
+   left: -140px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }
+  .car7{
+   position: relative;
+   bottom: 519px;
+   left: -175px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car8{
+   position: relative;
+   bottom: 542px;
+   left: -208px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car9{
+   position: relative;
+   bottom: 567px;
+   left: -243px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car10{
+   position: relative;
+   bottom: 592px;
+   left: -275px;
+   transform: rotate(-10deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car11{
+   position: relative;
+   bottom: 552px;
+   left: 23px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }
+  .car12{
+   position: relative;
+   bottom: 582px;
+   left: -10px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car13{
+   position: relative;
+   bottom: 612px;
+   left: -45px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car14{
+   position: relative;
+   bottom: 642px;
+   left: -78px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car15{
+   position: relative;
+   bottom: 672px;
+   left: -115px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car16{
+   position: relative;
+   bottom: 702px;
+   left: -148px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car17{
+   position: relative;
+   bottom: 732px;
+   left: -183px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }
+  .car18{
+   position: relative;
+   bottom: 762px;
+   left: -218px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car19{
+   position: relative;
+   bottom: 790px;
+   left: -250px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }
+  .car20{
+   position: relative;
+   bottom: 820px;
+   left: -278px;
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car21{
+   position: relative;
+   bottom: 947px;
+   left: 85px;
+   transform: rotate(-90deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car1.png") no-repeat;
+   z-index: 1;
+  }
+  .car22{
+   position: relative;
+   bottom: 945px;
+   left: 85px;
+   transform: rotate(-90deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car3.png") no-repeat;
+   z-index: 1;
+  }
+  .car23{
+   position: relative;
+   bottom: 939px;
+   left: 85px;
+   transform: rotate(-90deg);
+   width: 15px;
+   height: 30px;
+   margin: auto;
+   background: url("../img/car2.png") no-repeat;
+   z-index: 1;
+  }

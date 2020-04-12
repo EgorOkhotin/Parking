@@ -71,13 +71,13 @@ namespace Parking.Controllers
         }
 
         [Authorize]
-        public async Task<Models.Key> EnterUser(string tariffName, string autoId)
+        public async Task<Models.Key> EnterUserByAuto(string tariffName, string autoId)
         {
             if (tariffName == null)
                 return BadRequest<Models.Key>("Tariff name was null");
             try
             {
-                return await _enterService.EnterForAuthorizeByAutoId(tariffName, autoId);
+                return await _enterService.EnterForAuthorizeByAutoId(autoId, tariffName);
             }
             catch (ArgumentException argException)
             {

@@ -1,7 +1,3 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -24,25 +20,17 @@
 
             </div>
                 <div class="col-6 menu">
-                   <a class="textmenu" asp-page="">Главная</a>
-                   <a class="textmenu" asp-page="">О нас</a>
-                   <a class="textmenu" asp-page="">Контакты</a>
+                   <a class="textmenu" href="link">Главная</a>
+                   <a class="textmenu" href="link">О нас</a>
+                   <a class="textmenu" href="link">Контакты</a>
                 </div>
             <div class="col-1">
 
             </div>
             <div class="col-1">
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <input type="image" src="img/logout.png" width="30" height="30"/>
-                    </form>
-                }
-                else
-                {
-                    <a asp-area="Identity" asp-page="/Account/Register" alt="Зарегистрироваться"><img src="img/reg.png" width="30" height="30"></a>
-                    <a asp-area="Identity" asp-page="/Account/Login" alt="Войти"><img src="img/login.png" width="30" height="30"></a>
-                }
+                <a href="link" alt="Войти"><img src="img/login.png" width="30" height="30"></a>
+                
+                <a href="link" alt="Зарегистрироваться"><img src="img/reg.png" width="30" height="30"></a>
                 
             </div>
         </div>
@@ -64,14 +52,34 @@
     </div>    
     <div class="container3">
         <img class="park" src="img/parkinglux.png">
-        @if (SignInManager.IsSignedIn(User))
-            {
-                <div class="button">
-                    <button id='enter' class="bt-style">ЗАНЯТЬ МЕСТО</button>
-                </div> 
-            }
+        <div calss="button">
+            <button class="bt-style">ЗАНЯТЬ МЕСТО</button>
+      
+        </div> 
          <div class="car">
-
+            <div class="car1"></div>
+            <div class="car2"></div>
+            <div class="car3"></div>
+            <div class="car4"></div>
+            <div class="car5"></div>
+            <div class="car6"></div>
+            <div class="car7"></div>
+            <div class="car8"></div>
+            <div class="car9"></div>
+            <div class="car10"></div>
+            <div class="car11"></div>
+            <div class="car12"></div>
+            <div class="car13"></div>
+            <div class="car14"></div>
+            <div class="car15"></div>
+            <div class="car16"></div>
+            <div class="car17"></div>
+            <div class="car18"></div>
+            <div class="car19"></div>
+            <div class="car20"></div>
+            <div class="car21"></div>
+            <div class="car22"></div>
+            <div class="car23"></div>
         </div>
        </div> 
 
@@ -85,6 +93,6 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
