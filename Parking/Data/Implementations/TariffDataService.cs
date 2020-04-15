@@ -24,7 +24,7 @@ namespace Parking.Data.Implementations
         {
             try
             {
-                _context.Tariffs.Add(tariff);
+                _context.Tariffs.Attach(tariff);
                 await _context.SaveChangesAsync();
                 return true;
             }

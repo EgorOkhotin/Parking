@@ -17,6 +17,7 @@ namespace Parking.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, [FromServices] ILogger<ApplicationDbContext> logger)
             : base(options)
         {
+            Database.EnsureCreated();
             _storageChanged = async ()=> await SaveChangesAsync();
             _logger = logger;
         }

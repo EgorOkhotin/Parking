@@ -23,7 +23,7 @@ namespace Parking.Data.Implementations
         {
             try
             {
-                _context.Keys.Add(key);
+                _context.Keys.Attach(key);
                 await _context.SaveChangesAsync();
                 return true;
             }
