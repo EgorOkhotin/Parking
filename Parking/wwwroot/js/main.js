@@ -4,7 +4,8 @@ $(function(){
     localStorage.setItem('autoCount', 7);
 
     var req = new XMLHttpRequest();
-    var key
+    var key;
+    var postition;
 
     $('body').on("click", "#exit", function(){
         let currentAuto = localStorage.autoCount-1;
@@ -20,9 +21,10 @@ $(function(){
             console.log(req.responseText);
 
             $('#exit').remove();
-            $('.car'+currentAuto).remove();
+            $('.box'+postition).remove();
             $('.button').append('<button id="enter" class="bt-style">ЗАНЯТЬ МЕСТО</button>');
             $('.message').append('<a class="textmessage">С вас ' + cost + 'р., Счастливого пути!</a>');
+            localStorage.autoCount--;
         }
     });
     
@@ -31,6 +33,7 @@ $(function(){
             alert("Мест нет");
             return;
         }
+        postition = randomInteger(localStorage.autoCount, 22);
         req.open('POST', 'Parking/EnterUserByAuto?tariffName=basic&autoId=' + localStorage.autoCount, false);
         req.send();
         console.log(req.status)
@@ -42,7 +45,14 @@ $(function(){
             $('#enter').remove();
             $('.textmessage').remove();
             $('.button').append('<button id="exit" class="bt-style">ПОКИНУТЬ ПАРКОВУ</button>');
-            $('.car').append('<div class="car' + localStorage.autoCount++ + '"></div>');
+            $('.car').append('<div class="box' + postition + '"><div class="car' + postition + '"></div></div>');
+            localStorage.autoCount++;
         }
     });
 });
+
+function randomInteger(min, max) {
+    // получить случайное число от (min-0.5) до (max+0.5)
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    return Math.round(rand);
+  }

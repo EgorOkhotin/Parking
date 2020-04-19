@@ -61,34 +61,36 @@
     </div>
     <div class="separator2">
 
-    </div>    
+    </div>   
+
     <div class="container3">
         <img class="park" src="img/parkinglux.png">
-        @if (SignInManager.IsSignedIn(User))
-            {
-                <div class="button">
-                    <button id='enter' class="bt-style">ЗАНЯТЬ МЕСТО</button>
-                </div> 
-            }
-         <div class="car">
-            <div class="car1"></div>
-            <div class="car2"></div>
-            <div class="car3"></div>
-            <div class="car4"></div>
-            <div class="car5"></div>
-            <div class="car6"></div>
-        </div>
-       </div> 
-       <div class="col-12">
-           <div class="message">
-
-           </div>
-
+        <div class="car">
+            <div class="box1"><div class="car1"></div></div>
+            <div class="box2"><div class="car2"></div></div>
+            <div class="box3"><div class="car3"></div></div>
+            <div class="box4"><div class="car4"></div></div>
+            <div class="box5"><div class="car5"></div></div>
+            <div class="box6"><div class="car6"></div></div>
        </div>
+    </div>
+    <div class="separator2">
 
+    </div>
+    <div class="col-12">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <div class="button">
+                <button id='enter' class="bt-style">ЗАНЯТЬ МЕСТО</button>
+            </div> 
+        }
+        <div class="message">
 
-              
-    
+        </div>
+    </div>
+    <div class="separator2">
+
+    </div>
  
     
 

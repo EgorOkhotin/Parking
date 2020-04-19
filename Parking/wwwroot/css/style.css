@@ -45,15 +45,12 @@
   position: relative;
   left: 50%;
   border: 3px solid black;
-  margin-left: -500px;
+  margin-left: -495px;
+  bottom: 30px;
  }
  .body{
   background: url("../img/fon.png");
   background-size: cover;
- }
- .container3{
-  margin-top: 50px;
-  
  }
  .bt-style{
   position: relative;
@@ -83,17 +80,21 @@
     font-family: 'Indie Flower', cursive;
     font-size: 16px;
   }
+  .container3{
+    position: relative;
+    margin-top: 50px;    
+   }
   .car{
-   position: relative;
-   width: 15px;
-   height: 30px;
+   position: absolute;
+   width: 100%;
+   height: 60px;
    margin: auto;
    z-index: 1;
   }
   .car1{
    position: relative;
-   bottom: 377px;
-   left: 28px;
+   bottom: 375px;
+   right: -17px; 
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -103,8 +104,8 @@
   }
   .car2{
    position: relative;
-   bottom: 400px;
-   left: -7px;
+   bottom: 370px;
+   right: 15px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -114,8 +115,8 @@
   }
   .car3{
    position: relative;
-   bottom: 424px;
-   left: -42px;
+   bottom: 363px;
+   right: 50px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -125,8 +126,8 @@
   }
   .car4{
    position: relative;
-   bottom: 448px;
-   left: -73px;
+   bottom: 358px;
+   right: 80px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -136,8 +137,8 @@
   }
   .car5{
    position: relative;
-   bottom: 472px;
-   left: -105px;
+   bottom: 352px;
+   right: 115px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -146,9 +147,9 @@
    z-index: 1;
   }
   .car6{
-   position: relative;
-   bottom: 495px;
-   left: -140px;
+    position: relative;
+    bottom: 345px;
+    right: 150px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -158,8 +159,8 @@
   }
   .car7{
    position: relative;
-   bottom: 519px;
-   left: -175px;
+   bottom: 338px;
+   right: 183px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -169,8 +170,8 @@
   }
   .car8{
    position: relative;
-   bottom: 542px;
-   left: -208px;
+   bottom: 320px;
+   right: 280px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -180,8 +181,8 @@
   }
   .car9{
    position: relative;
-   bottom: 567px;
-   left: -243px;
+   bottom: 325px;
+   right: 250px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -191,8 +192,8 @@
   }
   .car10{
    position: relative;
-   bottom: 592px;
-   left: -275px;
+   bottom: 333px;
+   right: 215px;
    transform: rotate(-10deg);
    width: 15px;
    height: 30px;
@@ -201,9 +202,9 @@
    z-index: 1;
   }
   .car11{
-   position: relative;
-   bottom: 552px;
-   left: 23px;
+    position: relative;
+   bottom: 250px;
+   right: -15px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -211,9 +212,9 @@
    z-index: 1;
   }
   .car12{
-   position: relative;
-   bottom: 582px;
-   left: -10px;
+    position: relative;
+    bottom: 250px;
+   right: 20px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -221,9 +222,9 @@
    z-index: 1;
   }
   .car13{
-   position: relative;
-   bottom: 612px;
-   left: -45px;
+    position: relative;
+    bottom: 250px;
+   right: 53px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -231,9 +232,9 @@
    z-index: 1;
   }
   .car14{
-   position: relative;
-   bottom: 642px;
-   left: -78px;
+    position: relative;
+    bottom: 250px;
+   right: 87px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -241,9 +242,9 @@
    z-index: 1;
   }
   .car15{
-   position: relative;
-   bottom: 672px;
-   left: -115px;
+    position: relative;
+    bottom: 250px;
+   right: 120px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -251,9 +252,9 @@
    z-index: 1;
   }
   .car16{
-   position: relative;
-   bottom: 702px;
-   left: -148px;
+    position: relative;
+    bottom: 250px;
+   right: 285px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -261,9 +262,9 @@
    z-index: 1;
   }
   .car17{
-   position: relative;
-   bottom: 732px;
-   left: -183px;
+    position: relative;
+    bottom: 250px;
+   right: 155px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -271,9 +272,9 @@
    z-index: 1;
   }
   .car18{
-   position: relative;
-   bottom: 762px;
-   left: -218px;
+    position: relative;
+    bottom: 250px;
+   right: 190px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -281,9 +282,9 @@
    z-index: 1;
   }
   .car19{
-   position: relative;
-   bottom: 790px;
-   left: -250px;
+    position: relative;
+    bottom: 250px;
+   right: 225px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -291,9 +292,9 @@
    z-index: 1;
   }
   .car20{
-   position: relative;
-   bottom: 820px;
-   left: -278px;
+    position: relative;
+    bottom: 250px;
+   right: 257px;
    width: 15px;
    height: 30px;
    margin: auto;
@@ -301,9 +302,9 @@
    z-index: 1;
   }
   .car21{
-   position: relative;
-   bottom: 947px;
-   left: 85px;
+    position: relative;
+   bottom: 346px;
+   right: -75px;
    transform: rotate(-90deg);
    width: 15px;
    height: 30px;
@@ -312,9 +313,9 @@
    z-index: 1;
   }
   .car22{
-   position: relative;
-   bottom: 945px;
-   left: 85px;
+    position: relative;
+   bottom: 312px;
+   right: -75px;
    transform: rotate(-90deg);
    width: 15px;
    height: 30px;
@@ -323,9 +324,9 @@
    z-index: 1;
   }
   .car23{
-   position: relative;
-   bottom: 939px;
-   left: 85px;
+    position: relative;
+   bottom: 275px;
+   right: -75px;
    transform: rotate(-90deg);
    width: 15px;
    height: 30px;
@@ -333,3 +334,96 @@
    background: url("../img/car2.png") no-repeat;
    z-index: 1;
   }
+  .box1{
+    position: absolute;
+    left: 50%;
+  }
+  .box2{
+    position: absolute;
+    left: 50%;
+  }
+  .box3{
+    position: absolute;
+    left: 50%;
+  }
+  .box4{
+    position: absolute;
+    left: 50%;
+  }
+  .box5{
+    position: absolute;
+    left: 50%;
+  }
+  .box6{
+    position: absolute;
+    left: 50%;
+  }
+  .box7{
+    position: absolute;
+    left: 50%;
+  }
+  .box8{
+    position: absolute;
+    left: 50%;
+  }
+  .box9{
+    position: absolute;
+    left: 50%;
+  }
+  .box10{
+    position: absolute;
+    left: 50%;
+  }
+  .box11{
+    position: absolute;
+    left: 50%;
+  }
+  .box12{
+    position: absolute;
+    left: 50%;
+  }
+  .box13{
+    position: absolute;
+    left: 50%;
+  }
+  .box14{
+    position: absolute;
+    left: 50%;
+  }
+  .box15{
+    position: absolute;
+    left: 50%;
+  }
+  .box16{
+    position: absolute;
+    left: 50%;
+  }
+  .box17{
+    position: absolute;
+    left: 50%;
+  }
+  .box18{
+    position: absolute;
+    left: 50%;
+  }
+  .box19{
+    position: absolute;
+    left: 50%;
+  }
+  .box20{
+    position: absolute;
+    left: 50%;
+  }
+  .box21{
+    position: absolute;
+    left: 50%;
+  }
+  .box22{
+    position: absolute;
+    left: 50%;
+  }
+  .box23{
+    position: absolute;
+    left: 50%;
+  }
+
