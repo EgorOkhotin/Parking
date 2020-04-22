@@ -34,7 +34,7 @@ $(function(){
             return;
         }
         postition = randomInteger(localStorage.autoCount, 22);
-        req.open('POST', 'Parking/EnterUserByAuto?tariffName=basic&autoId=' + localStorage.autoCount, false);
+        req.open('POST', 'Parking/EnterUserByAuto?tariffName=HIGH&autoId=' + localStorage.autoCount, false);
         req.send();
         console.log(req.status)
         if (req.status == 200) {

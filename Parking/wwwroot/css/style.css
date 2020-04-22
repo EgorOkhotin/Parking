@@ -34,8 +34,6 @@
  z-index: 1;
 }
 .row{
- background: url("../img/bar.png") no-repeat center;
- background-size: 800px 120px;
  }
  .textmenu{
   margin: 20px;
